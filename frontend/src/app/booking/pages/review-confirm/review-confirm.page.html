@@ -1,0 +1,49 @@
+@if (result(); as appointment) {
+  @if (appointment.status === 'CONFIRMED') {
+    <div>
+      <h1>Appointment Confirmed</h1>
+      <p>Your appointment is confirmed. A confirmation email has been sent.</p>
+      <p>Confirmation number: <strong>{{ appointment.confirmationToken }}</strong></p>
+    </div>
+  } @else {
+    <div>
+      <h1>Appointment Pending Review</h1>
+      <p>
+        Your appointment request has been submitted for approval. A confirmation email has been sent, and staff
+        will respond within 24 hours.
+      </p>
+      <p>Confirmation number: <strong>{{ appointment.confirmationToken }}</strong></p>
+    </div>
+  }
+} @else {
+  <h1>Review &amp; Confirm</h1>
+
+  <dl>
+    <dt>Appointment type</dt>
+    <dd>{{ appointmentTypeName() }}</dd>
+    <dt>Provider</dt>
+    <dd>{{ providerName() }}</dd>
+    <dt>Date &amp; time</dt>
+    <dd>{{ slotDisplay() }}</dd>
+    @if (contact(); as contactInfo) {
+      <dt>Name</dt>
+      <dd>{{ contactInfo.fullName }}</dd>
+      <dt>Email</dt>
+      <dd>{{ contactInfo.email }}</dd>
+      <dt>Phone</dt>
+      <dd>{{ contactInfo.phone }}</dd>
+      @if (contactInfo.notes) {
+        <dt>Notes</dt>
+        <dd>{{ contactInfo.notes }}</dd>
+      }
+    }
+  </dl>
+
+  @if (submitError()) {
+    <p role="alert" aria-live="polite" class="hold-error">{{ submitError() }}</p>
+  }
+
+  <button type="button" [disabled]="submitting()" (click)="submit()">
+    {{ submitting() ? 'Submitting…' : 'Confirm Booking' }}
+  </button>
+}

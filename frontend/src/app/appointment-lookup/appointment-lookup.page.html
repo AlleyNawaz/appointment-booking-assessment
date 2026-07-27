@@ -1,0 +1,35 @@
+<h1>Your Appointment</h1>
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()">
+  @if (appointment(); as appointment) {
+    <dl>
+      <dt>Provider</dt>
+      <dd>{{ appointment.providerName }}</dd>
+      <dt>Type</dt>
+      <dd>{{ appointment.appointmentTypeName }}</dd>
+      <dt>Date</dt>
+      <dd>{{ formatDate(appointment.startDateTime) }}</dd>
+      <dt>Time</dt>
+      <dd>{{ formatTime(appointment.startDateTime) }}</dd>
+      <dt>Status</dt>
+      <dd>{{ appointment.status }}</dd>
+    </dl>
+
+    @if (appointment.cancellationEligible) {
+      <div class="cancel-section">
+        <label for="cancelReason">Reason for cancellation (optional)</label>
+        <textarea id="cancelReason" [value]="cancelReason()" (input)="cancelReason.set($any($event.target).value)"></textarea>
+
+        @if (cancelError()) {
+          <p role="alert" aria-live="polite">{{ cancelError() }}</p>
+        }
+
+        <button type="button" [disabled]="cancelling()" (click)="cancel()">
+          {{ cancelling() ? 'Cancelling…' : 'Cancel Appointment' }}
+        </button>
+      </div>
+    } @else if (appointment.status === 'CANCELLED') {
+      <p>This appointment has been cancelled.</p>
+    }
+  }
+</app-async-state-wrapper>

@@ -1,0 +1,62 @@
+.calendar {
+  max-width: 420px;
+}
+
+.calendar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar__week--header {
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.calendar__day {
+  aspect-ratio: 1;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+
+.calendar__day:disabled {
+  color: #aaa;
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.calendar__day--selected {
+  background: #1a5fb4;
+  color: #fff;
+}
+
+.calendar__day--empty {
+  border: none;
+  background: transparent;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.5rem;
+}
+
+.hold-error {
+  color: #7a1f14;
+}
+
+/* §14: slot grid reflows to a single column below 480px. */
+@media (max-width: 480px) {
+  .slot-grid {
+    grid-template-columns: 1fr;
+  }
+}
