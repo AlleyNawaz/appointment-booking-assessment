@@ -23,6 +23,9 @@ public class BookingProperties {
     /** §8.5/§12.10/§12.11: HOLD_DURATION_MINUTES — how long a slot hold reserves a slot before it expires. */
     private int holdDurationMinutes = 5;
 
+    /** §11.2: MIN_LEAD_TIME_HOURS — minimum hours between now and a bookable startDateTime. */
+    private int minLeadTimeHours = 24;
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -53,5 +56,13 @@ public class BookingProperties {
 
     public void setHoldDurationMinutes(int holdDurationMinutes) {
         this.holdDurationMinutes = holdDurationMinutes;
+    }
+
+    public int getMinLeadTimeHours() {
+        return minLeadTimeHours;
+    }
+
+    public void setMinLeadTimeHours(int minLeadTimeHours) {
+        this.minLeadTimeHours = minLeadTimeHours;
     }
 }

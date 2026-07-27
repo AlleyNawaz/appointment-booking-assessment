@@ -12,6 +12,7 @@ import com.clinic.booking.booking.repository.ClinicHolidayRepository;
 import com.clinic.booking.booking.repository.ProviderAvailabilityRuleRepository;
 import com.clinic.booking.booking.repository.ProviderRepository;
 import com.clinic.booking.booking.repository.ProviderUnavailabilityRepository;
+import com.clinic.booking.booking.repository.AppointmentRepository;
 import com.clinic.booking.booking.repository.SlotHoldRepository;
 import com.clinic.booking.common.exception.BookingWindowExceededException;
 import com.clinic.booking.common.exception.InvalidAppointmentDateException;
@@ -72,20 +73,24 @@ class AvailabilityServiceTest {
     private SlotHoldRepository slotHoldRepository;
 
     @Mock
+    private AppointmentRepository appointmentRepository;
+
+    @Mock
     private ClinicHolidayRepository clinicHolidayRepository;
 
     @BeforeEach
     void stubNoActiveHoldsByDefault() {
-        // Most tests don't concern active holds; this default keeps them from having to
-        // repeat the same stub. Lenient because early-return tests (bad date, holiday,
-        // unknown provider, no working rule) never reach the code path that calls this.
+        // Most tests don't concern active holds/appointments; this default keeps them from
+        // having to repeat the same stub. Lenient because early-return tests (bad date,
+        // holiday, unknown provider, no working rule) never reach the code path that calls this.
         lenient().when(slotHoldRepository.findActiveOverlapping(any(), any(), any(), any())).thenReturn(List.of());
+        lenient().when(appointmentRepository.findActiveOverlapping(any(), any(), any(), any())).thenReturn(List.of());
     }
 
     private AvailabilityService serviceWith(BookingProperties properties) {
         return new AvailabilityService(providerRepository, appointmentTypeRepository,
-                availabilityRuleRepository, unavailabilityRepository, slotHoldRepository, clinicHolidayRepository,
-                properties);
+                availabilityRuleRepository, unavailabilityRepository, slotHoldRepository, appointmentRepository,
+                clinicHolidayRepository, properties);
     }
 
     private AvailabilityService defaultService() {

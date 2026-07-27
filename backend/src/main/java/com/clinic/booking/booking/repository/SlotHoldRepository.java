@@ -7,8 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface SlotHoldRepository extends JpaRepository<SlotHold, Long> {
+
+    /** §8.6: loads the hold consumed at booking-creation time to resolve providerId/appointmentTypeId. */
+    Optional<SlotHold> findByHoldToken(String holdToken);
 
     /**
      * §7.8/§14: deletes rows where {@code expires_at < threshold} — the hold

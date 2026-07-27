@@ -40,3 +40,4 @@ booking:
   max-booking-window-days: 90
   slot-granularity-minutes: 15
   hold-duration-minutes: 5
+  min-lead-time-hours: 24

@@ -1,10 +1,12 @@
 package com.clinic.booking.booking.service;
 
+import com.clinic.booking.booking.domain.Appointment;
 import com.clinic.booking.booking.domain.AppointmentType;
 import com.clinic.booking.booking.domain.Provider;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule.RuleType;
 import com.clinic.booking.booking.dto.AvailabilityResponse;
+import com.clinic.booking.booking.repository.AppointmentRepository;
 import com.clinic.booking.booking.repository.AppointmentTypeRepository;
 import com.clinic.booking.booking.repository.ClinicHolidayRepository;
 import com.clinic.booking.booking.repository.ProviderAvailabilityRuleRepository;
@@ -28,21 +30,23 @@ import java.util.Optional;
 /**
  * Computes open slots for GET /booking/availability (PRD §8.4): a 15-minute
  * grid, in the provider's timezone, over WORKING minus BREAK for the
- * requested calendar date, minus provider_unavailability ranges and active
- * slot_holds, with clinic_holidays blocking the entire date unconditionally
- * (§11.5). Existing appointments are not yet subtracted — that table doesn't
- * exist until Milestone 5.
+ * requested calendar date, minus existing CONFIRMED/PENDING appointments,
+ * provider_unavailability ranges, and active slot_holds, with clinic_holidays
+ * blocking the entire date unconditionally (§11.5).
  */
 @Service
 public class AvailabilityService {
 
     private static final int MINUTES_PER_DAY = 24 * 60;
+    private static final List<Appointment.Status> ACTIVE_STATUSES =
+            List.of(Appointment.Status.PENDING, Appointment.Status.CONFIRMED);
 
     private final ProviderRepository providerRepository;
     private final AppointmentTypeRepository appointmentTypeRepository;
     private final ProviderAvailabilityRuleRepository availabilityRuleRepository;
     private final ProviderUnavailabilityRepository unavailabilityRepository;
     private final SlotHoldRepository slotHoldRepository;
+    private final AppointmentRepository appointmentRepository;
     private final ClinicHolidayRepository clinicHolidayRepository;
     private final BookingProperties bookingProperties;
 
@@ -52,6 +56,7 @@ public class AvailabilityService {
             ProviderAvailabilityRuleRepository availabilityRuleRepository,
             ProviderUnavailabilityRepository unavailabilityRepository,
             SlotHoldRepository slotHoldRepository,
+            AppointmentRepository appointmentRepository,
             ClinicHolidayRepository clinicHolidayRepository,
             BookingProperties bookingProperties) {
         this.providerRepository = providerRepository;
@@ -59,6 +64,7 @@ public class AvailabilityService {
         this.availabilityRuleRepository = availabilityRuleRepository;
         this.unavailabilityRepository = unavailabilityRepository;
         this.slotHoldRepository = slotHoldRepository;
+        this.appointmentRepository = appointmentRepository;
         this.clinicHolidayRepository = clinicHolidayRepository;
         this.bookingProperties = bookingProperties;
     }
@@ -116,9 +122,15 @@ public class AvailabilityService {
                 .stream()
                 .map(h -> new TimeRange(h.getStartDatetime(), h.getEndDatetime()))
                 .toList();
+        List<TimeRange> appointmentRanges = appointmentRepository
+                .findActiveOverlapping(providerId, ACTIVE_STATUSES, dayStart, dayEnd)
+                .stream()
+                .map(a -> new TimeRange(a.getStartDatetime(), a.getEndDatetime()))
+                .toList();
 
         busy.addAll(clipToDate(unavailabilityRanges, dayStart, dayEnd, providerZone));
         busy.addAll(clipToDate(holdRanges, dayStart, dayEnd, providerZone));
+        busy.addAll(clipToDate(appointmentRanges, dayStart, dayEnd, providerZone));
 
         List<MinuteRange> open = working;
         for (MinuteRange cut : busy) {

@@ -75,6 +75,47 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "PROVIDER_UNAVAILABLE", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(ValidationException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(LeadTimeViolationException.class)
+    public ResponseEntity<ErrorResponse> handleLeadTimeViolation(
+            LeadTimeViolationException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "LEAD_TIME_VIOLATION", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(ClinicClosedDayException.class)
+    public ResponseEntity<ErrorResponse> handleClinicClosedDay(
+            ClinicClosedDayException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "CLINIC_CLOSED_DAY", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(SlotHoldExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleSlotHoldExpired(
+            SlotHoldExpiredException ex, HttpServletRequest request) {
+        return build(HttpStatus.GONE, "SLOT_HOLD_EXPIRED", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(DuplicateAppointmentException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateAppointment(
+            DuplicateAppointmentException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "DUPLICATE_APPOINTMENT", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(PatientDailyLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handlePatientDailyLimitExceeded(
+            PatientDailyLimitExceededException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "PATIENT_DAILY_LIMIT_EXCEEDED", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(IdempotencyKeyReusedMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleIdempotencyKeyReusedMismatch(
+            IdempotencyKeyReusedMismatchException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "IDEMPOTENCY_KEY_REUSED_MISMATCH", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message,
             HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(
