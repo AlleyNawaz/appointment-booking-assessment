@@ -23,6 +23,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, "FEATURE_DISABLED", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(InvalidAppointmentDateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAppointmentDate(
+            InvalidAppointmentDateException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "INVALID_APPOINTMENT_DATE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(BookingWindowExceededException.class)
+    public ResponseEntity<ErrorResponse> handleBookingWindowExceeded(
+            BookingWindowExceededException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "BOOKING_WINDOW_EXCEEDED", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParameter(
             MissingServletRequestParameterException ex, HttpServletRequest request) {
