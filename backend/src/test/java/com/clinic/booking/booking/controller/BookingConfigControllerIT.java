@@ -94,8 +94,23 @@ class BookingConfigControllerIT {
     }
 
     @Test
-    void providers_missingAppointmentTypeId_returns400ValidationError_regardlessOfFlagState() {
+    void providers_missingAppointmentTypeId_whenFlagOff_returns403FeatureDisabled_notValidationError() {
+        // Proves the ordering fix: the flag check must win over the missing-parameter
+        // check, since §6 requires the flag to be checked "as the first statement
+        // before any other validation."
         jdbcTemplate.update(FLAG_SQL, false);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity("/api/v1/booking/providers", Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).containsEntry("errorCode", "FEATURE_DISABLED");
+    }
+
+    @Test
+    void providers_missingAppointmentTypeId_whenFlagOn_returns400ValidationError() {
+        // Once the flag check has passed, the missing-parameter validation still
+        // applies, with the same error shape as before the ordering fix.
+        jdbcTemplate.update(FLAG_SQL, true);
 
         ResponseEntity<Map> response = restTemplate.getForEntity("/api/v1/booking/providers", Map.class);
 
