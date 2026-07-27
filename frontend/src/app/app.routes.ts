@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./appointment-lookup/appointment-lookup.page').then((m) => m.AppointmentLookupPage),
   },
+  {
+    path: 'staff',
+    loadChildren: () => import('./staff/staff.routes').then((m) => m.staffRoutes),
+  },
 ];

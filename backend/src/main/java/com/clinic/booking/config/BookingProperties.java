@@ -32,6 +32,27 @@ public class BookingProperties {
     /** §8.8/§12.6: clinic phone number surfaced when self-service cancellation is no longer available. */
     private String clinicPhoneNumber = "+1-555-0100";
 
+    /** §15.9: BCRYPT_STRENGTH — BCrypt cost factor for staff password hashing. */
+    private int bcryptStrength = 12;
+
+    /** §15.9: minimum staff password length. */
+    private int minPasswordLength = 12;
+
+    /** §15.9: maximum staff password length (BCrypt silently truncates beyond 72 bytes). */
+    private int maxPasswordLength = 72;
+
+    /** §15.9: MAX_FAILED_LOGIN_ATTEMPTS — consecutive failures before lockout. */
+    private int maxFailedLoginAttempts = 5;
+
+    /** §15.9: LOGIN_LOCKOUT_MINUTES — how long an account stays locked once tripped. */
+    private int loginLockoutMinutes = 15;
+
+    /** §15.9: SESSION_IDLE_TIMEOUT_MINUTES — staff session idle expiry. */
+    private int sessionIdleTimeoutMinutes = 30;
+
+    /** §15.9: SESSION_ABSOLUTE_TIMEOUT_HOURS — staff session absolute expiry regardless of activity. */
+    private int sessionAbsoluteTimeoutHours = 8;
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -86,5 +107,61 @@ public class BookingProperties {
 
     public void setClinicPhoneNumber(String clinicPhoneNumber) {
         this.clinicPhoneNumber = clinicPhoneNumber;
+    }
+
+    public int getBcryptStrength() {
+        return bcryptStrength;
+    }
+
+    public void setBcryptStrength(int bcryptStrength) {
+        this.bcryptStrength = bcryptStrength;
+    }
+
+    public int getMinPasswordLength() {
+        return minPasswordLength;
+    }
+
+    public void setMinPasswordLength(int minPasswordLength) {
+        this.minPasswordLength = minPasswordLength;
+    }
+
+    public int getMaxPasswordLength() {
+        return maxPasswordLength;
+    }
+
+    public void setMaxPasswordLength(int maxPasswordLength) {
+        this.maxPasswordLength = maxPasswordLength;
+    }
+
+    public int getMaxFailedLoginAttempts() {
+        return maxFailedLoginAttempts;
+    }
+
+    public void setMaxFailedLoginAttempts(int maxFailedLoginAttempts) {
+        this.maxFailedLoginAttempts = maxFailedLoginAttempts;
+    }
+
+    public int getLoginLockoutMinutes() {
+        return loginLockoutMinutes;
+    }
+
+    public void setLoginLockoutMinutes(int loginLockoutMinutes) {
+        this.loginLockoutMinutes = loginLockoutMinutes;
+    }
+
+    public int getSessionIdleTimeoutMinutes() {
+        return sessionIdleTimeoutMinutes;
+    }
+
+    public void setSessionIdleTimeoutMinutes(int sessionIdleTimeoutMinutes) {
+        this.sessionIdleTimeoutMinutes = sessionIdleTimeoutMinutes;
+    }
+
+    public int getSessionAbsoluteTimeoutHours() {
+        return sessionAbsoluteTimeoutHours;
+    }
+
+    public void setSessionAbsoluteTimeoutHours(int sessionAbsoluteTimeoutHours) {
+        this.sessionAbsoluteTimeoutHours = sessionAbsoluteTimeoutHours;
     }
 }

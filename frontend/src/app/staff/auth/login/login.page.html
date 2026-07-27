@@ -1,0 +1,37 @@
+<h1>Staff Login</h1>
+
+<form [formGroup]="loginForm" (ngSubmit)="submit()">
+  <div class="form-field">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      type="text"
+      formControlName="username"
+      autocomplete="username"
+      [attr.aria-invalid]="loginForm.controls.username.invalid && loginForm.controls.username.touched"
+    />
+    @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
+      <p role="alert" aria-live="polite" class="form-field__error">Username is required.</p>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      autocomplete="current-password"
+      [attr.aria-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+    />
+    @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+      <p role="alert" aria-live="polite" class="form-field__error">Password is required.</p>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <p role="alert" aria-live="polite" class="form-field__error">{{ errorMessage() }}</p>
+  }
+
+  <button type="submit" [disabled]="submitting()">Log In</button>
+</form>

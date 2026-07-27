@@ -20,6 +20,8 @@ export const ERROR_MESSAGES: Record<string, string> = {
   IDEMPOTENCY_KEY_REUSED_MISMATCH: 'This request could not be resubmitted. Please start again.',
   APPOINTMENT_NOT_FOUND: 'No appointment was found for the given confirmation link.',
   CANCELLATION_WINDOW_EXPIRED: 'This appointment can no longer be cancelled online.',
+  INVALID_CREDENTIALS: 'Incorrect username or password.',
+  ACCOUNT_LOCKED: 'This account is temporarily locked due to repeated failed login attempts. Please try again later.',
 };
 
 export const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please try again.';
