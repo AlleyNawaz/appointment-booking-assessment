@@ -19,6 +19,7 @@
 
   <properties>
     <java.version>17</java.version>
+    <shedlock.version>7.7.0</shedlock.version>
   </properties>
 
   <dependencies>
@@ -46,6 +47,20 @@
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
+    </dependency>
+
+    <!-- §16: "Distributed locking: ShedLock (JDBC provider...)" — used by the
+         @Scheduled hold-reaper job (§12.14/§7.13). Not managed by Spring Boot's
+         BOM, so the version is pinned explicitly above. -->
+    <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-spring</artifactId>
+      <version>${shedlock.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-provider-jdbc-template</artifactId>
+      <version>${shedlock.version}</version>
     </dependency>
 
     <dependency>

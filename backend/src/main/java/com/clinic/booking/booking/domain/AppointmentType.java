@@ -38,10 +38,11 @@ public class AppointmentType {
     @Column(name = "is_active", nullable = false)
     private boolean active;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    // Neither column is ever written by Hibernate — see Provider's identical fields for why.
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private Instant updatedAt;
 
     protected AppointmentType() {

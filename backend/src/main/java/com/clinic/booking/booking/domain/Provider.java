@@ -46,10 +46,14 @@ public class Provider {
     @Column(name = "is_active", nullable = false)
     private boolean active;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    // Neither column is ever written by Hibernate — MySQL's DEFAULT CURRENT_TIMESTAMP(3)
+    // (and, for updated_at, ON UPDATE CURRENT_TIMESTAMP(3)) assigns both entirely at the
+    // DB layer; DEFAULT only applies when a column is omitted from the statement, not
+    // when explicitly sent as NULL, so this table would otherwise reject any JPA insert.
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private Instant updatedAt;
 
     @Column(name = "deleted_at")

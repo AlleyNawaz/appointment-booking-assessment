@@ -4,13 +4,13 @@ import com.clinic.booking.booking.domain.AppointmentType;
 import com.clinic.booking.booking.domain.Provider;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule.RuleType;
-import com.clinic.booking.booking.domain.ProviderUnavailability;
 import com.clinic.booking.booking.dto.AvailabilityResponse;
 import com.clinic.booking.booking.repository.AppointmentTypeRepository;
 import com.clinic.booking.booking.repository.ClinicHolidayRepository;
 import com.clinic.booking.booking.repository.ProviderAvailabilityRuleRepository;
 import com.clinic.booking.booking.repository.ProviderRepository;
 import com.clinic.booking.booking.repository.ProviderUnavailabilityRepository;
+import com.clinic.booking.booking.repository.SlotHoldRepository;
 import com.clinic.booking.common.exception.BookingWindowExceededException;
 import com.clinic.booking.common.exception.InvalidAppointmentDateException;
 import com.clinic.booking.config.BookingProperties;
@@ -28,10 +28,10 @@ import java.util.Optional;
 /**
  * Computes open slots for GET /booking/availability (PRD §8.4): a 15-minute
  * grid, in the provider's timezone, over WORKING minus BREAK for the
- * requested calendar date, minus provider_unavailability ranges, with
- * clinic_holidays blocking the entire date unconditionally (§11.5). Existing
- * appointments and active slot_holds are not yet subtracted — those tables
- * don't exist until Milestones 5 and 4 respectively.
+ * requested calendar date, minus provider_unavailability ranges and active
+ * slot_holds, with clinic_holidays blocking the entire date unconditionally
+ * (§11.5). Existing appointments are not yet subtracted — that table doesn't
+ * exist until Milestone 5.
  */
 @Service
 public class AvailabilityService {
@@ -42,6 +42,7 @@ public class AvailabilityService {
     private final AppointmentTypeRepository appointmentTypeRepository;
     private final ProviderAvailabilityRuleRepository availabilityRuleRepository;
     private final ProviderUnavailabilityRepository unavailabilityRepository;
+    private final SlotHoldRepository slotHoldRepository;
     private final ClinicHolidayRepository clinicHolidayRepository;
     private final BookingProperties bookingProperties;
 
@@ -50,12 +51,14 @@ public class AvailabilityService {
             AppointmentTypeRepository appointmentTypeRepository,
             ProviderAvailabilityRuleRepository availabilityRuleRepository,
             ProviderUnavailabilityRepository unavailabilityRepository,
+            SlotHoldRepository slotHoldRepository,
             ClinicHolidayRepository clinicHolidayRepository,
             BookingProperties bookingProperties) {
         this.providerRepository = providerRepository;
         this.appointmentTypeRepository = appointmentTypeRepository;
         this.availabilityRuleRepository = availabilityRuleRepository;
         this.unavailabilityRepository = unavailabilityRepository;
+        this.slotHoldRepository = slotHoldRepository;
         this.clinicHolidayRepository = clinicHolidayRepository;
         this.bookingProperties = bookingProperties;
     }
@@ -101,7 +104,21 @@ public class AvailabilityService {
             return new AvailabilityResponse(date, List.of());
         }
 
-        busy.addAll(unavailabilityRangesForDate(providerId, date, providerZone));
+        Instant dayStart = date.atStartOfDay(providerZone).toInstant();
+        Instant dayEnd = date.plusDays(1).atStartOfDay(providerZone).toInstant();
+
+        List<TimeRange> unavailabilityRanges = unavailabilityRepository.findOverlapping(providerId, dayStart, dayEnd)
+                .stream()
+                .map(u -> new TimeRange(u.getStartDatetime(), u.getEndDatetime()))
+                .toList();
+        List<TimeRange> holdRanges = slotHoldRepository
+                .findActiveOverlapping(providerId, dayStart, dayEnd, Instant.now())
+                .stream()
+                .map(h -> new TimeRange(h.getStartDatetime(), h.getEndDatetime()))
+                .toList();
+
+        busy.addAll(clipToDate(unavailabilityRanges, dayStart, dayEnd, providerZone));
+        busy.addAll(clipToDate(holdRanges, dayStart, dayEnd, providerZone));
 
         List<MinuteRange> open = working;
         for (MinuteRange cut : busy) {
@@ -137,33 +154,29 @@ public class AvailabilityService {
     }
 
     /**
-     * Clips each overlapping provider_unavailability row (§7.5/§12.2/§12.3) to the
-     * requested calendar date's boundaries in the provider's timezone, and expresses
-     * the clipped portion as a minute-of-day range so it can be subtracted alongside
-     * BREAK rules.
+     * Clips each overlapping range — provider_unavailability (§7.5/§12.2/§12.3) or
+     * an active slot_hold (§7.8/§12.10) — to the requested calendar date's
+     * boundaries in the provider's timezone, and expresses the clipped portion as
+     * a minute-of-day range so it can be subtracted alongside BREAK rules.
      */
-    private List<MinuteRange> unavailabilityRangesForDate(Long providerId, LocalDate date, ZoneId providerZone) {
-        Instant dayStart = date.atStartOfDay(providerZone).toInstant();
-        Instant dayEnd = date.plusDays(1).atStartOfDay(providerZone).toInstant();
-
-        List<ProviderUnavailability> overlapping =
-                unavailabilityRepository.findOverlapping(providerId, dayStart, dayEnd);
-
-        List<MinuteRange> ranges = new ArrayList<>();
-        for (ProviderUnavailability unavailability : overlapping) {
-            Instant clippedStart = unavailability.getStartDatetime().isBefore(dayStart)
-                    ? dayStart : unavailability.getStartDatetime();
-            Instant clippedEnd = unavailability.getEndDatetime().isAfter(dayEnd)
-                    ? dayEnd : unavailability.getEndDatetime();
+    private List<MinuteRange> clipToDate(List<TimeRange> ranges, Instant dayStart, Instant dayEnd, ZoneId providerZone) {
+        List<MinuteRange> result = new ArrayList<>();
+        for (TimeRange range : ranges) {
+            Instant clippedStart = range.start().isBefore(dayStart) ? dayStart : range.start();
+            Instant clippedEnd = range.end().isAfter(dayEnd) ? dayEnd : range.end();
 
             int startMinutes = clippedStart.equals(dayStart)
                     ? 0 : toMinutes(ZonedDateTime.ofInstant(clippedStart, providerZone).toLocalTime());
             int endMinutes = clippedEnd.equals(dayEnd)
                     ? MINUTES_PER_DAY : toMinutes(ZonedDateTime.ofInstant(clippedEnd, providerZone).toLocalTime());
 
-            ranges.add(new MinuteRange(startMinutes, endMinutes));
+            result.add(new MinuteRange(startMinutes, endMinutes));
         }
-        return ranges;
+        return result;
+    }
+
+    /** A half-open [start, end) range of instants — the common shape of a provider_unavailability row or a slot_hold. */
+    private record TimeRange(Instant start, Instant end) {
     }
 
     private static int toMinutes(LocalTime time) {

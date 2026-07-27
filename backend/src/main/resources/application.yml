@@ -34,3 +34,9 @@ management:
 
 server:
   port: ${SERVER_PORT:8080}
+
+booking:
+  clinic-timezone: ${CLINIC_TIMEZONE:America/New_York}
+  max-booking-window-days: 90
+  slot-granularity-minutes: 15
+  hold-duration-minutes: 5

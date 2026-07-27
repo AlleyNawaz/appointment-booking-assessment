@@ -20,6 +20,9 @@ public class BookingProperties {
     /** §8.4: SLOT_GRANULARITY_MINUTES — the grid granularity for computed slot start times. */
     private int slotGranularityMinutes = 15;
 
+    /** §8.5/§12.10/§12.11: HOLD_DURATION_MINUTES — how long a slot hold reserves a slot before it expires. */
+    private int holdDurationMinutes = 5;
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -42,5 +45,13 @@ public class BookingProperties {
 
     public void setSlotGranularityMinutes(int slotGranularityMinutes) {
         this.slotGranularityMinutes = slotGranularityMinutes;
+    }
+
+    public int getHoldDurationMinutes() {
+        return holdDurationMinutes;
+    }
+
+    public void setHoldDurationMinutes(int holdDurationMinutes) {
+        this.holdDurationMinutes = holdDurationMinutes;
     }
 }

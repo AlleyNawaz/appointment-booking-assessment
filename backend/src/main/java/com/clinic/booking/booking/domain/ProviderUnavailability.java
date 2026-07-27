@@ -36,7 +36,8 @@ public class ProviderUnavailability {
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    // Never written by Hibernate — see Provider's identical field for why.
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
 
     protected ProviderUnavailability() {

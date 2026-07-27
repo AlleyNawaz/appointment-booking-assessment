@@ -5,15 +5,18 @@ import com.clinic.booking.booking.domain.Provider;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule;
 import com.clinic.booking.booking.domain.ProviderAvailabilityRule.RuleType;
 import com.clinic.booking.booking.domain.ProviderUnavailability;
+import com.clinic.booking.booking.domain.SlotHold;
 import com.clinic.booking.booking.dto.AvailabilityResponse;
 import com.clinic.booking.booking.repository.AppointmentTypeRepository;
 import com.clinic.booking.booking.repository.ClinicHolidayRepository;
 import com.clinic.booking.booking.repository.ProviderAvailabilityRuleRepository;
 import com.clinic.booking.booking.repository.ProviderRepository;
 import com.clinic.booking.booking.repository.ProviderUnavailabilityRepository;
+import com.clinic.booking.booking.repository.SlotHoldRepository;
 import com.clinic.booking.common.exception.BookingWindowExceededException;
 import com.clinic.booking.common.exception.InvalidAppointmentDateException;
 import com.clinic.booking.config.BookingProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -66,11 +69,23 @@ class AvailabilityServiceTest {
     private ProviderUnavailabilityRepository unavailabilityRepository;
 
     @Mock
+    private SlotHoldRepository slotHoldRepository;
+
+    @Mock
     private ClinicHolidayRepository clinicHolidayRepository;
+
+    @BeforeEach
+    void stubNoActiveHoldsByDefault() {
+        // Most tests don't concern active holds; this default keeps them from having to
+        // repeat the same stub. Lenient because early-return tests (bad date, holiday,
+        // unknown provider, no working rule) never reach the code path that calls this.
+        lenient().when(slotHoldRepository.findActiveOverlapping(any(), any(), any(), any())).thenReturn(List.of());
+    }
 
     private AvailabilityService serviceWith(BookingProperties properties) {
         return new AvailabilityService(providerRepository, appointmentTypeRepository,
-                availabilityRuleRepository, unavailabilityRepository, clinicHolidayRepository, properties);
+                availabilityRuleRepository, unavailabilityRepository, slotHoldRepository, clinicHolidayRepository,
+                properties);
     }
 
     private AvailabilityService defaultService() {
@@ -205,6 +220,34 @@ class AvailabilityServiceTest {
         Instant vacationEnd = ZonedDateTime.of(date, LocalTime.of(11, 0), zone).toInstant();
         when(unavailabilityRepository.findOverlapping(eq(PROVIDER_ID), any(), any()))
                 .thenReturn(List.of(unavailability(vacationStart, vacationEnd)));
+
+        AvailabilityResponse response = defaultService().computeAvailableSlots(PROVIDER_ID, TYPE_ID, date);
+
+        List<LocalTime> localTimes = response.slots().stream()
+                .map(instant -> ZonedDateTime.ofInstant(instant, zone).toLocalTime())
+                .toList();
+        assertThat(localTimes).contains(LocalTime.of(9, 0), LocalTime.of(9, 45));
+        assertThat(localTimes).doesNotContain(LocalTime.of(10, 0), LocalTime.of(10, 30));
+        assertThat(localTimes).contains(LocalTime.of(11, 0), LocalTime.of(11, 45));
+    }
+
+    @Test
+    void activeSlotHold_blocksTheOverlappingPortionOfTheDay() {
+        // §8.4: "subtracting ... the union of ... active slot_holds ..." (Milestone 4).
+        ZoneId zone = ZoneId.of("America/New_York");
+        LocalDate date = LocalDate.now(zone).plusDays(10);
+        when(clinicHolidayRepository.existsByHolidayDate(date)).thenReturn(false);
+        when(providerRepository.findById(PROVIDER_ID)).thenReturn(Optional.of(provider("America/New_York")));
+        when(appointmentTypeRepository.findById(TYPE_ID)).thenReturn(Optional.of(appointmentType(15, 0)));
+        when(availabilityRuleRepository.findByProviderIdAndDayOfWeek(eq(PROVIDER_ID), any()))
+                .thenReturn(List.of(rule(LocalTime.of(9, 0), LocalTime.of(12, 0), RuleType.WORKING)));
+        lenient().when(unavailabilityRepository.findOverlapping(eq(PROVIDER_ID), any(), any())).thenReturn(List.of());
+
+        Instant holdStart = ZonedDateTime.of(date, LocalTime.of(10, 0), zone).toInstant();
+        Instant holdEnd = ZonedDateTime.of(date, LocalTime.of(11, 0), zone).toInstant();
+        SlotHold hold = new SlotHold(PROVIDER_ID, TYPE_ID, holdStart, holdEnd, "hold-token", Instant.now().plusSeconds(300));
+        when(slotHoldRepository.findActiveOverlapping(eq(PROVIDER_ID), any(), any(), any()))
+                .thenReturn(List.of(hold));
 
         AvailabilityResponse response = defaultService().computeAvailableSlots(PROVIDER_ID, TYPE_ID, date);
 
