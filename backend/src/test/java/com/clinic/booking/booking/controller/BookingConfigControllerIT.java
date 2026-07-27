@@ -10,14 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * End-to-end verification of PRD §6/§8.1/§8.2/§8.3 against the real local
- * MySQL schema from Milestone 1. Each test flips {@code feature_flags} via a
+ * End-to-end verification of PRD §6/§8.1/§8.2/§8.3/§8.4 against the real local
+ * MySQL schema. Each test flips {@code feature_flags} via a
  * raw SQL update (simulating an external state change, not going through
  * application code) and the context is reloaded after every test
  * ({@link DirtiesContext}) so each test starts with a cold, empty
@@ -65,6 +67,11 @@ class BookingConfigControllerIT {
                 restTemplate.getForEntity("/api/v1/booking/providers?appointmentTypeId=2", Map.class);
         assertThat(providersResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(providersResponse.getBody()).containsEntry("errorCode", "FEATURE_DISABLED");
+
+        ResponseEntity<Map> availabilityResponse = restTemplate.getForEntity(
+                "/api/v1/booking/availability?providerId=5&appointmentTypeId=2&date=" + tomorrow(), Map.class);
+        assertThat(availabilityResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(availabilityResponse.getBody()).containsEntry("errorCode", "FEATURE_DISABLED");
     }
 
     @Test
@@ -91,6 +98,13 @@ class BookingConfigControllerIT {
                 restTemplate.getForEntity("/api/v1/booking/providers?appointmentTypeId=2", List.class);
         assertThat(providersResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(providersResponse.getBody()).isEmpty(); // no providers seeded yet (Milestone 1 seeds no provider rows)
+
+        ResponseEntity<Map> availabilityResponse = restTemplate.getForEntity(
+                "/api/v1/booking/availability?providerId=5&appointmentTypeId=2&date=" + tomorrow(), Map.class);
+        assertThat(availabilityResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(availabilityResponse.getBody()).containsEntry("date", tomorrow().toString());
+        // no providers seeded yet, so no availability rules exist for providerId=5 either — empty is correct (§19 #35)
+        assertThat((List<?>) availabilityResponse.getBody().get("slots")).isEmpty();
     }
 
     @Test
@@ -116,5 +130,64 @@ class BookingConfigControllerIT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("errorCode", "VALIDATION_ERROR");
+    }
+
+    @Test
+    void availability_missingParams_whenFlagOff_returns403FeatureDisabled_notValidationError() {
+        // Same ordering-safety pattern as /providers: the flag check must win over
+        // any missing-parameter check (§6).
+        jdbcTemplate.update(FLAG_SQL, false);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity("/api/v1/booking/availability", Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).containsEntry("errorCode", "FEATURE_DISABLED");
+    }
+
+    @Test
+    void availability_missingParams_whenFlagOn_returns400ValidationError() {
+        jdbcTemplate.update(FLAG_SQL, true);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity("/api/v1/booking/availability", Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("errorCode", "VALIDATION_ERROR");
+    }
+
+    @Test
+    void availability_dateInPast_whenFlagOn_returns400InvalidAppointmentDate() {
+        jdbcTemplate.update(FLAG_SQL, true);
+        LocalDate yesterday = clinicToday().minusDays(2);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity(
+                "/api/v1/booking/availability?providerId=5&appointmentTypeId=2&date=" + yesterday, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("errorCode", "INVALID_APPOINTMENT_DATE");
+    }
+
+    @Test
+    void availability_dateBeyondBookingWindow_whenFlagOn_returns400BookingWindowExceeded() {
+        jdbcTemplate.update(FLAG_SQL, true);
+        LocalDate tooFarOut = clinicToday().plusDays(95);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity(
+                "/api/v1/booking/availability?providerId=5&appointmentTypeId=2&date=" + tooFarOut, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("errorCode", "BOOKING_WINDOW_EXCEEDED");
+    }
+
+    /**
+     * Matches the clinic timezone the service validates against (application.yml's
+     * default {@code booking.clinic-timezone}), not the test JVM's system default
+     * zone — the two can disagree by a calendar day near local midnight.
+     */
+    private static LocalDate clinicToday() {
+        return LocalDate.now(ZoneId.of("America/New_York"));
+    }
+
+    private static LocalDate tomorrow() {
+        return clinicToday().plusDays(1);
     }
 }
