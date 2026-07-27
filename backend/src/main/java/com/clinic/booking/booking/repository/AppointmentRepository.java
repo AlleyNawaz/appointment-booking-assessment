@@ -15,6 +15,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     /** §8.6 idempotency lookup — step (1) of the replay contract. */
     Optional<Appointment> findByIdempotencyKey(String idempotencyKey);
 
+    /** §8.7/§8.8: token-based lookup for the never-gated patient self-service endpoints. */
+    Optional<Appointment> findByConfirmationToken(String confirmationToken);
+
     /**
      * Active-status appointments for a patient identity (§11.6:
      * {@code lower(email) + phone}) whose start falls on the given calendar

@@ -116,6 +116,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "IDEMPOTENCY_KEY_REUSED_MISMATCH", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(AppointmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAppointmentNotFound(
+            AppointmentNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "APPOINTMENT_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(CancellationWindowExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleCancellationWindowExpired(
+            CancellationWindowExpiredException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "CANCELLATION_WINDOW_EXPIRED", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message,
             HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(

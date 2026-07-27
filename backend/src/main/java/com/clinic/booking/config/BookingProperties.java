@@ -26,6 +26,12 @@ public class BookingProperties {
     /** §11.2: MIN_LEAD_TIME_HOURS — minimum hours between now and a bookable startDateTime. */
     private int minLeadTimeHours = 24;
 
+    /** §8.8/§12.6: CANCELLATION_CUTOFF_HOURS — how close to startDateTime self-service cancellation is still allowed. */
+    private int cancellationCutoffHours = 4;
+
+    /** §8.8/§12.6: clinic phone number surfaced when self-service cancellation is no longer available. */
+    private String clinicPhoneNumber = "+1-555-0100";
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -64,5 +70,21 @@ public class BookingProperties {
 
     public void setMinLeadTimeHours(int minLeadTimeHours) {
         this.minLeadTimeHours = minLeadTimeHours;
+    }
+
+    public int getCancellationCutoffHours() {
+        return cancellationCutoffHours;
+    }
+
+    public void setCancellationCutoffHours(int cancellationCutoffHours) {
+        this.cancellationCutoffHours = cancellationCutoffHours;
+    }
+
+    public String getClinicPhoneNumber() {
+        return clinicPhoneNumber;
+    }
+
+    public void setClinicPhoneNumber(String clinicPhoneNumber) {
+        this.clinicPhoneNumber = clinicPhoneNumber;
     }
 }

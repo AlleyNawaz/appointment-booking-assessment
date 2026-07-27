@@ -110,6 +110,12 @@ public class Appointment {
         this.requestBodyHash = requestBodyHash;
     }
 
+    /** §8.8/§12.6: patient self-service cancellation — the only status mutation this milestone needs. */
+    public void cancel(String reason) {
+        this.status = Status.CANCELLED;
+        this.cancellationReason = reason;
+    }
+
     public Long getId() {
         return id;
     }

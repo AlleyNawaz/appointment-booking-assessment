@@ -41,3 +41,5 @@ booking:
   slot-granularity-minutes: 15
   hold-duration-minutes: 5
   min-lead-time-hours: 24
+  cancellation-cutoff-hours: 4
+  clinic-phone-number: "+1-555-0100"
