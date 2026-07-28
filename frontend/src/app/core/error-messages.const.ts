@@ -26,6 +26,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   APPOINTMENT_NOT_RESCHEDULABLE: 'This appointment cannot be rescheduled in its current status.',
   APPOINTMENT_STATE_CHANGED:
     'This appointment was modified by clinic staff and can no longer be rescheduled. Refresh and try again.',
+  RATE_LIMITED: 'Too many requests. Please wait a moment and try again.',
 };
 
 export const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please try again.';

@@ -6,12 +6,13 @@ import { StaffSessionService } from '../auth/staff-session.service';
 import { AdminApiService } from './admin-api.service';
 import { ProviderAdmin } from './admin.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/admin/providers` (PRD §4/§8.13). */
 @Component({
   selector: 'app-providers-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './providers.page.html',
 })

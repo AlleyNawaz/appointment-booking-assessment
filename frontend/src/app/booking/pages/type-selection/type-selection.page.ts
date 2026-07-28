@@ -6,27 +6,28 @@ import { AppointmentType } from '../../models/appointment-type.model';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService } from '../../state/booking-state.service';
 import { AppHttpError } from '../../../core/interceptors/http-error.interceptor';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /** `/book/type` (PRD §4/§8.2) — list active appointment types. */
 @Component({
   selector: 'app-type-selection-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Select Appointment Type</h1>
+    <h1>{{ 'booking.typeSelection.title' | translate }}</h1>
     <app-async-state-wrapper
       [loading]="loading()"
       [error]="error()"
       [empty]="!loading() && !error() && types().length === 0"
-      emptyMessage="No appointment types are currently available."
+      [emptyMessage]="'booking.typeSelection.empty' | translate"
     >
       <ul class="option-list">
         @for (type of types(); track type.id) {
           <li>
             <button type="button" (click)="select(type)">
               <span>{{ type.displayName }}</span>
-              <span class="option-list__meta">{{ type.durationMinutes }} min</span>
+              <span class="option-list__meta">{{ 'booking.typeSelection.durationMinutes' | translate:{ durationMinutes: '' + type.durationMinutes } }}</span>
             </button>
           </li>
         }

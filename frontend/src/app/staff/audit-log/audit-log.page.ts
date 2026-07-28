@@ -5,12 +5,13 @@ import { AppHttpError } from '../../core/interceptors/http-error.interceptor';
 import { StaffNavComponent } from '../staff-nav.component';
 import { AuditLogApiService } from './audit-log-api.service';
 import { AuditLogPageResponse } from './audit-log.model';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/audit-log` (PRD §4/§8.18) — read-only, ROLE_SYSADMIN only. */
 @Component({
   selector: 'app-audit-log-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './audit-log.page.html',
 })

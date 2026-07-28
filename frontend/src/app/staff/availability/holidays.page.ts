@@ -6,12 +6,13 @@ import { StaffSessionService } from '../auth/staff-session.service';
 import { AvailabilityApiService } from './availability-api.service';
 import { Holiday } from './availability.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/availability/holidays` (PRD §4/§8.16) — clinic-wide holiday calendar. */
 @Component({
   selector: 'app-holidays-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './holidays.page.html',
 })

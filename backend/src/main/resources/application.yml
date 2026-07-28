@@ -27,13 +27,23 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus
   endpoint:
     health:
       show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 server:
   port: ${SERVER_PORT:8080}
+  # Honour X-Forwarded-* headers (client IP, proto, host) so RateLimitingFilter and
+  # request logging see the real client address when deployed behind a load balancer
+  # or reverse proxy (PRD §14 Scalability). The proxy/LB is trusted infrastructure and
+  # is responsible for setting X-Forwarded-For correctly and stripping any client-supplied
+  # value before forwarding; this app does not run directly on the public internet.
+  forward-headers-strategy: framework
   servlet:
     session:
       timeout: 30m
@@ -60,6 +70,8 @@ booking:
   approval-timeout-hours: 24
   missed-marker-grace-hours: 24
   missed-correction-window-days: 7
+  availability-rate-limit-per-minute: 10
+  booking-rate-limit-per-ten-minutes: 5
   cors:
     allowed-origins:
       - "http://localhost:4200"

@@ -6,12 +6,13 @@ import { StaffSessionService } from '../auth/staff-session.service';
 import { AdminApiService } from './admin-api.service';
 import { AppointmentTypeAdmin } from './admin.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/admin/appointment-types` (PRD §4/§8.12). */
 @Component({
   selector: 'app-appointment-types-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-types.page.html',
 })

@@ -5,6 +5,8 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.clinic.booking.common.exception.FeatureDisabledException;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.junit.jupiter.api.AfterEach;
@@ -74,8 +76,9 @@ class FeatureGateAspectTest {
         lenient().when(joinPoint.getSignature()).thenReturn(signature);
         lenient().when(signature.toShortString()).thenReturn("AppointmentTypeController.getAppointmentTypes()");
         when(featureFlagRepository.findById(FeatureFlagService.ENABLE_ONLINE_BOOKING)).thenReturn(Optional.empty());
+        Counter flagBlockedCounter = new SimpleMeterRegistry().counter("test.flag.blocked");
 
-        FeatureGateAspect aspect = new FeatureGateAspect(new FeatureFlagService(featureFlagRepository));
+        FeatureGateAspect aspect = new FeatureGateAspect(new FeatureFlagService(featureFlagRepository), flagBlockedCounter);
         FeatureGate annotation = gatedAnnotation();
 
         assertThatThrownBy(() -> aspect.enforce(joinPoint, annotation))
@@ -83,6 +86,7 @@ class FeatureGateAspectTest {
 
         assertThat(logAppender.list).hasSize(1);
         assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.INFO);
+        assertThat(flagBlockedCounter.count()).isEqualTo(1.0);
     }
 
     @Test
@@ -91,7 +95,8 @@ class FeatureGateAspectTest {
                 .thenReturn(Optional.of(new FeatureFlag(
                         FeatureFlagService.ENABLE_ONLINE_BOOKING, true, "SYSTEM_SEED", Instant.now())));
 
-        FeatureGateAspect aspect = new FeatureGateAspect(new FeatureFlagService(featureFlagRepository));
+        FeatureGateAspect aspect = new FeatureGateAspect(
+                new FeatureFlagService(featureFlagRepository), new SimpleMeterRegistry().counter("test.flag.blocked"));
         FeatureGate annotation = gatedAnnotation();
 
         aspect.enforce(joinPoint, annotation);

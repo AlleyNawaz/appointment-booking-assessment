@@ -1,17 +1,17 @@
 <app-staff-nav />
 
-<h1>Admin — Providers</h1>
+<h1>{{ 'staff.providersAdmin.title' | translate }}</h1>
 
 <app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="providers() !== null && providers()!.length === 0">
   @if (providers(); as providerList) {
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Specialty</th>
-          <th>Email</th>
-          <th>Timezone</th>
-          <th>Active</th>
+          <th>{{ 'staff.providersAdmin.columnName' | translate }}</th>
+          <th>{{ 'staff.providersAdmin.columnSpecialty' | translate }}</th>
+          <th>{{ 'staff.providersAdmin.columnEmail' | translate }}</th>
+          <th>{{ 'staff.providersAdmin.columnTimezone' | translate }}</th>
+          <th>{{ 'staff.providersAdmin.columnActive' | translate }}</th>
           @if (canWrite()) {
             <th></th>
           }
@@ -24,11 +24,11 @@
             <td>{{ provider.specialty }}</td>
             <td>{{ provider.email }}</td>
             <td>{{ provider.timezone }}</td>
-            <td>{{ provider.isActive ? 'Yes' : 'No' }}</td>
+            <td>{{ (provider.isActive ? 'common.yes' : 'common.no') | translate }}</td>
             @if (canWrite()) {
               <td>
                 @if (provider.isActive) {
-                  <button type="button" (click)="softDelete(provider)">Deactivate</button>
+                  <button type="button" (click)="softDelete(provider)">{{ 'common.deactivate' | translate }}</button>
                 }
               </td>
             }
@@ -40,25 +40,25 @@
 </app-async-state-wrapper>
 
 @if (canWrite()) {
-  <h2>Add Provider</h2>
-  <label for="firstName">First Name</label>
+  <h2>{{ 'staff.providersAdmin.addTitle' | translate }}</h2>
+  <label for="firstName">{{ 'staff.providersAdmin.firstNameLabel' | translate }}</label>
   <input id="firstName" type="text" [value]="firstName()" (input)="firstName.set($any($event.target).value)" />
 
-  <label for="lastName">Last Name</label>
+  <label for="lastName">{{ 'staff.providersAdmin.lastNameLabel' | translate }}</label>
   <input id="lastName" type="text" [value]="lastName()" (input)="lastName.set($any($event.target).value)" />
 
-  <label for="specialty">Specialty</label>
+  <label for="specialty">{{ 'staff.providersAdmin.specialtyLabel' | translate }}</label>
   <input id="specialty" type="text" [value]="specialty()" (input)="specialty.set($any($event.target).value)" />
 
-  <label for="email">Email</label>
+  <label for="email">{{ 'staff.providersAdmin.emailLabel' | translate }}</label>
   <input id="email" type="email" [value]="email()" (input)="email.set($any($event.target).value)" />
 
-  <label for="timezone">Timezone</label>
+  <label for="timezone">{{ 'staff.providersAdmin.timezoneLabel' | translate }}</label>
   <input id="timezone" type="text" [value]="timezone()" (input)="timezone.set($any($event.target).value)" />
 
   @if (formError()) {
     <p role="alert" aria-live="polite">{{ formError() }}</p>
   }
 
-  <button type="button" (click)="create()">Add</button>
+  <button type="button" (click)="create()">{{ 'staff.providersAdmin.addButton' | translate }}</button>
 }

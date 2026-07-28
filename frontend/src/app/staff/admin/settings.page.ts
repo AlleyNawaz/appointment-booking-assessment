@@ -5,6 +5,7 @@ import { AppHttpError } from '../../core/interceptors/http-error.interceptor';
 import { AdminApiService } from './admin-api.service';
 import { FeatureFlag } from './admin.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 const FLAG_NAME = 'enable_online_booking';
 
@@ -15,7 +16,7 @@ const FLAG_NAME = 'enable_online_booking';
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.page.html',
 })

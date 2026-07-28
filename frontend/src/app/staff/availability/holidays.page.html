@@ -1,15 +1,15 @@
 <app-staff-nav />
 
-<h1>Availability — Holidays</h1>
+<h1>{{ 'staff.holidays.title' | translate }}</h1>
 
 <app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="holidays() !== null && holidays()!.length === 0">
   @if (holidays(); as holidayList) {
     <table>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Recurring Annually</th>
+          <th>{{ 'staff.holidays.columnDate' | translate }}</th>
+          <th>{{ 'staff.holidays.columnName' | translate }}</th>
+          <th>{{ 'staff.holidays.columnRecurring' | translate }}</th>
           @if (canWrite()) {
             <th></th>
           }
@@ -20,9 +20,9 @@
           <tr>
             <td>{{ holiday.holidayDate }}</td>
             <td>{{ holiday.name }}</td>
-            <td>{{ holiday.isRecurringAnnually ? 'Yes' : 'No' }}</td>
+            <td>{{ (holiday.isRecurringAnnually ? 'common.yes' : 'common.no') | translate }}</td>
             @if (canWrite()) {
-              <td><button type="button" (click)="delete(holiday.id)">Delete</button></td>
+              <td><button type="button" (click)="delete(holiday.id)">{{ 'common.delete' | translate }}</button></td>
             }
           </tr>
         }
@@ -32,11 +32,11 @@
 </app-async-state-wrapper>
 
 @if (canWrite()) {
-  <h2>Add Holiday</h2>
-  <label for="holidayDate">Date</label>
+  <h2>{{ 'staff.holidays.addTitle' | translate }}</h2>
+  <label for="holidayDate">{{ 'staff.holidays.dateLabel' | translate }}</label>
   <input id="holidayDate" type="date" [value]="holidayDate()" (change)="holidayDate.set($any($event.target).value)" />
 
-  <label for="name">Name</label>
+  <label for="name">{{ 'staff.holidays.nameLabel' | translate }}</label>
   <input id="name" type="text" [value]="name()" (input)="name.set($any($event.target).value)" />
 
   <label for="isRecurringAnnually">
@@ -46,12 +46,12 @@
       [checked]="isRecurringAnnually()"
       (change)="isRecurringAnnually.set($any($event.target).checked)"
     />
-    Recurring annually
+    {{ 'staff.holidays.recurringLabel' | translate }}
   </label>
 
   @if (formError()) {
     <p role="alert" aria-live="polite">{{ formError() }}</p>
   }
 
-  <button type="button" (click)="create()">Add</button>
+  <button type="button" (click)="create()">{{ 'staff.holidays.addButton' | translate }}</button>
 }

@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AsyncStateWrapperComponent } from '../../../shared/components/async-state-wrapper/async-state-wrapper.component';
 import { CLINIC_PHONE_NUMBER } from '../../../core/clinic-info.const';
 import { BookingApiService } from '../../services/booking-api.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /**
  * `/book` (PRD §4) — the flag check and entry point. Unlike the wizard-step
@@ -14,21 +15,21 @@ import { BookingApiService } from '../../services/booking-api.service';
 @Component({
   selector: 'app-booking-entry-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, RouterLink],
+  imports: [AsyncStateWrapperComponent, RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-async-state-wrapper [loading]="loading()" [error]="error()">
       @if (!loading() && !error()) {
         @if (enabled()) {
-          <p>Redirecting to appointment booking…</p>
+          <p>{{ 'booking.entry.redirecting' | translate }}</p>
         } @else {
           <div class="unavailable">
-            <h1>Online booking is currently unavailable</h1>
-            <p>Please call the clinic at <strong>{{ clinicPhoneNumber }}</strong> to schedule an appointment.</p>
+            <h1>{{ 'booking.entry.unavailableTitle' | translate }}</h1>
+            <p>{{ 'booking.entry.unavailableBody' | translate:{ clinicPhoneNumber } }}</p>
           </div>
         }
       }
-      <p><a routerLink="/appointments">Manage an existing appointment</a></p>
+      <p><a routerLink="/appointments">{{ 'booking.entry.manageExisting' | translate }}</a></p>
     </app-async-state-wrapper>
   `,
 })

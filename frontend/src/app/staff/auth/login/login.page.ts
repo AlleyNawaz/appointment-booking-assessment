@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { AppHttpError } from '../../../core/interceptors/http-error.interceptor';
 import { StaffAuthService } from '../staff-auth.service';
 import { StaffSessionService } from '../staff-session.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /** `/staff/login` (PRD §4/§8.20) — the only staff-console route this milestone implements. */
 @Component({
   selector: 'app-staff-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.page.html',
 })

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 
 import { StaffSessionService } from './auth/staff-session.service';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 
 /**
  * Staff-console nav (PRD §4.1) — hides/shows items per the role-visibility
@@ -11,21 +12,21 @@ import { StaffSessionService } from './auth/staff-session.service';
 @Component({
   selector: 'app-staff-nav',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav>
-      <a routerLink="/staff/appointments">Appointments</a>
-      <a routerLink="/staff/availability/hours">Hours</a>
-      <a routerLink="/staff/availability/unavailability">Time Off</a>
-      <a routerLink="/staff/availability/holidays">Holidays</a>
+      <a routerLink="/staff/appointments">{{ 'staff.nav.appointments' | translate }}</a>
+      <a routerLink="/staff/availability/hours">{{ 'staff.nav.hours' | translate }}</a>
+      <a routerLink="/staff/availability/unavailability">{{ 'staff.nav.timeOff' | translate }}</a>
+      <a routerLink="/staff/availability/holidays">{{ 'staff.nav.holidays' | translate }}</a>
       @if (showAdmin()) {
-        <a routerLink="/staff/admin/appointment-types">Appointment Types</a>
-        <a routerLink="/staff/admin/providers">Providers</a>
-        <a routerLink="/staff/admin/settings">System Settings</a>
+        <a routerLink="/staff/admin/appointment-types">{{ 'staff.nav.appointmentTypes' | translate }}</a>
+        <a routerLink="/staff/admin/providers">{{ 'staff.nav.providers' | translate }}</a>
+        <a routerLink="/staff/admin/settings">{{ 'staff.nav.systemSettings' | translate }}</a>
       }
       @if (showAuditLog()) {
-        <a routerLink="/staff/audit-log">Audit Log</a>
+        <a routerLink="/staff/audit-log">{{ 'staff.nav.auditLog' | translate }}</a>
       }
     </nav>
   `,

@@ -1,9 +1,9 @@
 <app-staff-nav />
 
-<h1>Availability — Hours</h1>
+<h1>{{ 'staff.hours.title' | translate }}</h1>
 
 @if (!isProvider()) {
-  <label for="providerId">Provider ID</label>
+  <label for="providerId">{{ 'staff.hours.providerIdLabel' | translate }}</label>
   <input id="providerId" type="number" [value]="providerIdInput()" (change)="onProviderIdChange($any($event.target).value)" />
 }
 
@@ -12,10 +12,10 @@
     <table>
       <thead>
         <tr>
-          <th>Day</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Type</th>
+          <th>{{ 'staff.hours.columnDay' | translate }}</th>
+          <th>{{ 'staff.hours.columnStart' | translate }}</th>
+          <th>{{ 'staff.hours.columnEnd' | translate }}</th>
+          <th>{{ 'staff.hours.columnType' | translate }}</th>
           @if (canWrite()) {
             <th></th>
           }
@@ -29,7 +29,7 @@
             <td>{{ rule.endTime }}</td>
             <td>{{ rule.ruleType }}</td>
             @if (canWrite()) {
-              <td><button type="button" (click)="deleteRule(rule.id)">Delete</button></td>
+              <td><button type="button" (click)="deleteRule(rule.id)">{{ 'common.delete' | translate }}</button></td>
             }
           </tr>
         }
@@ -39,25 +39,25 @@
 </app-async-state-wrapper>
 
 @if (canWrite()) {
-  <h2>Add Rule</h2>
-  <label for="dayOfWeek">Day of week (0=Sunday)</label>
+  <h2>{{ 'staff.hours.addRuleTitle' | translate }}</h2>
+  <label for="dayOfWeek">{{ 'staff.hours.dayOfWeekLabel' | translate }}</label>
   <input id="dayOfWeek" type="number" min="0" max="6" [value]="dayOfWeek()" (change)="dayOfWeek.set(+$any($event.target).value)" />
 
-  <label for="startTime">Start</label>
+  <label for="startTime">{{ 'staff.hours.startLabel' | translate }}</label>
   <input id="startTime" type="time" step="1" [value]="startTime()" (change)="startTime.set($any($event.target).value)" />
 
-  <label for="endTime">End</label>
+  <label for="endTime">{{ 'staff.hours.endLabel' | translate }}</label>
   <input id="endTime" type="time" step="1" [value]="endTime()" (change)="endTime.set($any($event.target).value)" />
 
-  <label for="ruleType">Type</label>
+  <label for="ruleType">{{ 'staff.hours.typeLabel' | translate }}</label>
   <select id="ruleType" [value]="ruleType()" (change)="ruleType.set($any($event.target).value)">
-    <option value="WORKING">Working</option>
-    <option value="BREAK">Break</option>
+    <option value="WORKING">{{ 'staff.hours.typeWorking' | translate }}</option>
+    <option value="BREAK">{{ 'staff.hours.typeBreak' | translate }}</option>
   </select>
 
   @if (formError()) {
     <p role="alert" aria-live="polite">{{ formError() }}</p>
   }
 
-  <button type="button" (click)="addRule()">Add Rule</button>
+  <button type="button" (click)="addRule()">{{ 'staff.hours.addRuleButton' | translate }}</button>
 }

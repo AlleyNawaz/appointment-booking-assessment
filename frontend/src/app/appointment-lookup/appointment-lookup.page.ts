@@ -7,6 +7,7 @@ import { formatClinicDate, formatClinicTime } from '../core/clinic-info.const';
 import { AppointmentDetailResponse } from '../booking/models/appointment.model';
 import { BookingApiService } from '../booking/services/booking-api.service';
 import { RescheduleActionComponent } from './reschedule-action.component';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 
 /**
  * `/appointments/:token` (PRD §3/§4/§8.7/§8.8/§8.19) — never gated for
@@ -16,7 +17,7 @@ import { RescheduleActionComponent } from './reschedule-action.component';
 @Component({
   selector: 'app-appointment-lookup-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, RescheduleActionComponent],
+  imports: [AsyncStateWrapperComponent, RescheduleActionComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-lookup.page.html',
 })

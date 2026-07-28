@@ -8,6 +8,7 @@ import { formatClinicDate, formatClinicTime } from '../../core/clinic-info.const
 import { StaffSessionService } from '../auth/staff-session.service';
 import { AppointmentApiService } from './appointment-api.service';
 import { StaffAppointment } from './staff-appointment.model';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /**
  * `/staff/appointments/:id` (PRD §4.1/§8.10) — approve/reject/complete a
@@ -26,7 +27,7 @@ import { StaffAppointment } from './staff-appointment.model';
 @Component({
   selector: 'app-appointment-detail-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-detail.page.html',
 })

@@ -1,53 +1,65 @@
-<h1>Select Date &amp; Time</h1>
+<h1>{{ 'booking.scheduleSelection.title' | translate }}</h1>
 
 @if (flashMessage()) {
   <p role="alert" aria-live="polite" class="hold-error">{{ flashMessage() }}</p>
 }
 
-<div class="calendar" role="grid" aria-label="Select an appointment date">
+<div class="calendar">
   <div class="calendar__nav">
-    <button type="button" (click)="previousMonth()" [disabled]="!canGoToPreviousMonth()" aria-label="Previous month">
+    <button
+      type="button"
+      (click)="previousMonth()"
+      [disabled]="!canGoToPreviousMonth()"
+      [attr.aria-label]="'booking.scheduleSelection.previousMonth' | translate"
+    >
       &lsaquo;
     </button>
     <span>{{ viewedMonth() }}</span>
-    <button type="button" (click)="nextMonth()" [disabled]="!canGoToNextMonth()" aria-label="Next month">
+    <button
+      type="button"
+      (click)="nextMonth()"
+      [disabled]="!canGoToNextMonth()"
+      [attr.aria-label]="'booking.scheduleSelection.nextMonth' | translate"
+    >
       &rsaquo;
     </button>
   </div>
 
-  <div class="calendar__week calendar__week--header" role="row">
-    @for (weekday of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track weekday) {
-      <span role="columnheader">{{ weekday }}</span>
-    }
-  </div>
-
-  @for (week of calendarWeeks(); track $index) {
-    <div class="calendar__week" role="row">
-      @for (day of week; track $index) {
-        @if (day) {
-          <button
-            type="button"
-            role="gridcell"
-            class="calendar__day"
-            [class.calendar__day--selected]="selectedDate() === day.date"
-            [attr.aria-selected]="selectedDate() === day.date"
-            [attr.aria-disabled]="day.disabled"
-            [attr.aria-label]="day.disabled ? day.date + ': ' + day.disabledReason : day.date"
-            [disabled]="day.disabled"
-            (click)="selectDate(day)"
-          >
-            {{ day.dayOfMonth }}
-          </button>
-        } @else {
-          <span class="calendar__day calendar__day--empty" role="gridcell" aria-hidden="true"></span>
-        }
+  <div class="calendar__grid" role="grid" [attr.aria-label]="'booking.scheduleSelection.calendarAriaLabel' | translate">
+    <div class="calendar__week calendar__week--header" role="row">
+      @for (weekday of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track weekday) {
+        <span role="columnheader">{{ weekday }}</span>
       }
     </div>
-  }
+
+    @for (week of calendarWeeks(); track $index) {
+      <div class="calendar__week" role="row">
+        @for (day of week; track $index) {
+          @if (day) {
+            <button
+              type="button"
+              role="gridcell"
+              class="calendar__day"
+              [class.calendar__day--selected]="selectedDate() === day.date"
+              [attr.aria-selected]="selectedDate() === day.date"
+              [attr.aria-disabled]="day.disabled"
+              [attr.aria-label]="day.disabled ? day.date + ': ' + day.disabledReason : day.date"
+              [disabled]="day.disabled"
+              (click)="selectDate(day)"
+            >
+              {{ day.dayOfMonth }}
+            </button>
+          } @else {
+            <span class="calendar__day calendar__day--empty" role="gridcell" aria-hidden="true"></span>
+          }
+        }
+      </div>
+    }
+  </div>
 </div>
 
 @if (selectedDate()) {
-  <h2>Available Times</h2>
+  <h2>{{ 'booking.scheduleSelection.availableTimes' | translate }}</h2>
 
   @if (holdError()) {
     <p role="alert" aria-live="polite" class="hold-error">{{ holdError() }}</p>
@@ -57,9 +69,9 @@
     [loading]="slotsLoading()"
     [error]="slotsError()"
     [empty]="!slotsLoading() && !slotsError() && slots().length === 0"
-    emptyMessage="No available slots for this date."
+    [emptyMessage]="'booking.scheduleSelection.empty' | translate"
   >
-    <div class="slot-grid" role="list" aria-label="Available time slots">
+    <div class="slot-grid" role="list" [attr.aria-label]="'booking.scheduleSelection.availableTimesAriaLabel' | translate">
       @for (slot of slots(); track slot) {
         <button type="button" role="listitem" [disabled]="holdSubmitting()" (click)="selectSlot(slot)">
           {{ formatSlotTime(slot) }}

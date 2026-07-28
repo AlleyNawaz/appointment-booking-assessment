@@ -1,9 +1,9 @@
 <app-staff-nav />
 
-<h1>Audit Log</h1>
+<h1>{{ 'staff.auditLog.title' | translate }}</h1>
 
 <div class="filters">
-  <label for="appointmentIdFilter">Appointment ID</label>
+  <label for="appointmentIdFilter">{{ 'staff.auditLog.appointmentIdLabel' | translate }}</label>
   <input
     id="appointmentIdFilter"
     type="number"
@@ -11,10 +11,10 @@
     (change)="onAppointmentIdFilterChange($any($event.target).value)"
   />
 
-  <label for="fromFilter">From</label>
+  <label for="fromFilter">{{ 'staff.auditLog.fromLabel' | translate }}</label>
   <input id="fromFilter" type="date" [value]="fromFilter()" (change)="onFromFilterChange($any($event.target).value)" />
 
-  <label for="toFilter">To</label>
+  <label for="toFilter">{{ 'staff.auditLog.toLabel' | translate }}</label>
   <input id="toFilter" type="date" [value]="toFilter()" (change)="onToFilterChange($any($event.target).value)" />
 </div>
 
@@ -22,18 +22,18 @@
   [loading]="loading()"
   [error]="error()"
   [empty]="page() !== null && page()!.content.length === 0"
-  emptyMessage="No audit log entries match these filters."
+  [emptyMessage]="'staff.auditLog.empty' | translate"
 >
   @if (page(); as result) {
     <table>
       <thead>
         <tr>
-          <th>Appointment ID</th>
-          <th>Previous Status</th>
-          <th>New Status</th>
-          <th>Changed By</th>
-          <th>Reason</th>
-          <th>Changed At</th>
+          <th>{{ 'staff.auditLog.columnAppointmentId' | translate }}</th>
+          <th>{{ 'staff.auditLog.columnPreviousStatus' | translate }}</th>
+          <th>{{ 'staff.auditLog.columnNewStatus' | translate }}</th>
+          <th>{{ 'staff.auditLog.columnChangedBy' | translate }}</th>
+          <th>{{ 'staff.auditLog.columnReason' | translate }}</th>
+          <th>{{ 'staff.auditLog.columnChangedAt' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -51,10 +51,10 @@
     </table>
 
     <div class="pagination">
-      <button type="button" [disabled]="result.page === 0" (click)="goToPage(result.page - 1)">Previous</button>
-      <span>Page {{ result.page + 1 }} of {{ result.totalPages || 1 }}</span>
+      <button type="button" [disabled]="result.page === 0" (click)="goToPage(result.page - 1)">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.pageOf' | translate:{ page: '' + (result.page + 1), totalPages: '' + (result.totalPages || 1) } }}</span>
       <button type="button" [disabled]="result.page + 1 >= result.totalPages" (click)="goToPage(result.page + 1)">
-        Next
+        {{ 'common.next' | translate }}
       </button>
     </div>
   }

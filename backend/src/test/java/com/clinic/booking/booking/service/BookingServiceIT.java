@@ -8,10 +8,12 @@ import com.clinic.booking.common.exception.IdempotencyKeyReusedMismatchException
 import com.clinic.booking.common.exception.LeadTimeViolationException;
 import com.clinic.booking.common.exception.PatientDailyLimitExceededException;
 import com.clinic.booking.common.exception.SlotAlreadyBookedException;
+import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -62,6 +64,10 @@ class BookingServiceIT {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    @Qualifier("bookingSuccessCounter")
+    private Counter bookingSuccessCounter;
+
     private long providerId;
 
     @BeforeEach
@@ -98,6 +104,18 @@ class BookingServiceIT {
                 validRequest(holdToken), UUID.randomUUID().toString());
 
         assertThat(response.status()).isEqualTo(Appointment.Status.CONFIRMED);
+    }
+
+    @Test
+    void successfulBooking_incrementsTheBookingSuccessCounter() {
+        // PRD §14: "booking success rate" — delta-based, since the Counter is a
+        // process-lifetime singleton shared across every test in this class.
+        double before = bookingSuccessCounter.count();
+        String holdToken = insertHold(GENERAL_CONSULT_TYPE_ID, Instant.now().plus(48, ChronoUnit.HOURS));
+
+        bookingService.createAppointment(validRequest(holdToken), UUID.randomUUID().toString());
+
+        assertThat(bookingSuccessCounter.count()).isEqualTo(before + 1);
     }
 
     @Test

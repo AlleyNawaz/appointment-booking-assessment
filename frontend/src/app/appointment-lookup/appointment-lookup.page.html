@@ -1,23 +1,23 @@
-<h1>Your Appointment</h1>
+<h1>{{ 'appointmentLookup.title' | translate }}</h1>
 
 <app-async-state-wrapper [loading]="loading()" [error]="error()">
   @if (appointment(); as appointment) {
     <dl>
-      <dt>Provider</dt>
+      <dt>{{ 'appointmentLookup.provider' | translate }}</dt>
       <dd>{{ appointment.providerName }}</dd>
-      <dt>Type</dt>
+      <dt>{{ 'appointmentLookup.type' | translate }}</dt>
       <dd>{{ appointment.appointmentTypeName }}</dd>
-      <dt>Date</dt>
+      <dt>{{ 'appointmentLookup.date' | translate }}</dt>
       <dd>{{ formatDate(appointment.startDateTime) }}</dd>
-      <dt>Time</dt>
+      <dt>{{ 'appointmentLookup.time' | translate }}</dt>
       <dd>{{ formatTime(appointment.startDateTime) }}</dd>
-      <dt>Status</dt>
+      <dt>{{ 'appointmentLookup.status' | translate }}</dt>
       <dd>{{ appointment.status }}</dd>
     </dl>
 
     @if (appointment.cancellationEligible) {
       <div class="cancel-section">
-        <label for="cancelReason">Reason for cancellation (optional)</label>
+        <label for="cancelReason">{{ 'appointmentLookup.cancelReasonLabel' | translate }}</label>
         <textarea id="cancelReason" [value]="cancelReason()" (input)="cancelReason.set($any($event.target).value)"></textarea>
 
         @if (cancelError()) {
@@ -25,13 +25,13 @@
         }
 
         <button type="button" [disabled]="cancelling()" (click)="cancel()">
-          {{ cancelling() ? 'Cancelling…' : 'Cancel Appointment' }}
+          {{ (cancelling() ? 'appointmentLookup.cancelling' : 'appointmentLookup.cancelButton') | translate }}
         </button>
       </div>
 
       <app-reschedule-action [appointment]="appointment" [confirmationToken]="appointment.confirmationToken" />
     } @else if (appointment.status === 'CANCELLED') {
-      <p>This appointment has been cancelled.</p>
+      <p>{{ 'appointmentLookup.cancelledMessage' | translate }}</p>
     }
   }
 </app-async-state-wrapper>

@@ -16,6 +16,8 @@ import com.clinic.booking.booking.repository.SlotHoldRepository;
 import com.clinic.booking.common.exception.BookingWindowExceededException;
 import com.clinic.booking.common.exception.InvalidAppointmentDateException;
 import com.clinic.booking.config.BookingProperties;
+import io.micrometer.core.instrument.Timer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -49,6 +51,7 @@ public class AvailabilityService {
     private final AppointmentRepository appointmentRepository;
     private final ClinicHolidayRepository clinicHolidayRepository;
     private final BookingProperties bookingProperties;
+    private final Timer availabilityLatencyTimer;
 
     public AvailabilityService(
             ProviderRepository providerRepository,
@@ -58,7 +61,8 @@ public class AvailabilityService {
             SlotHoldRepository slotHoldRepository,
             AppointmentRepository appointmentRepository,
             ClinicHolidayRepository clinicHolidayRepository,
-            BookingProperties bookingProperties) {
+            BookingProperties bookingProperties,
+            @Qualifier("availabilityLatencyTimer") Timer availabilityLatencyTimer) {
         this.providerRepository = providerRepository;
         this.appointmentTypeRepository = appointmentTypeRepository;
         this.availabilityRuleRepository = availabilityRuleRepository;
@@ -67,9 +71,20 @@ public class AvailabilityService {
         this.appointmentRepository = appointmentRepository;
         this.clinicHolidayRepository = clinicHolidayRepository;
         this.bookingProperties = bookingProperties;
+        this.availabilityLatencyTimer = availabilityLatencyTimer;
     }
 
+    /** PRD §14: records slot-computation latency regardless of which path below returns/throws. */
     public AvailabilityResponse computeAvailableSlots(Long providerId, Long appointmentTypeId, LocalDate date) {
+        Timer.Sample sample = Timer.start();
+        try {
+            return doComputeAvailableSlots(providerId, appointmentTypeId, date);
+        } finally {
+            sample.stop(availabilityLatencyTimer);
+        }
+    }
+
+    private AvailabilityResponse doComputeAvailableSlots(Long providerId, Long appointmentTypeId, LocalDate date) {
         validateDateWindow(date);
 
         // §11.5/§12.4: a clinic holiday blocks every provider unconditionally, no override.

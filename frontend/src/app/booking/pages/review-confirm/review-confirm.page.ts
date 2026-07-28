@@ -6,12 +6,13 @@ import { formatClinicDate, formatClinicTime } from '../../../core/clinic-info.co
 import { AppointmentResponse } from '../../models/appointment.model';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService, ContactDetails } from '../../state/booking-state.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /** `/book/confirm` (PRD §3/§4/§8.6) — final review, submit, and the success/pending result. */
 @Component({
   selector: 'app-review-confirm-page',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './review-confirm.page.html',
   styleUrl: './review-confirm.page.scss',
@@ -75,9 +76,9 @@ export class ReviewConfirmPage implements OnInit {
           this.submitting.set(false);
           if (err.errorCode === 'SLOT_HOLD_EXPIRED') {
             // §3: hold-timeout mid-flow returns to slot selection; contact info is retained.
-            this.bookingState.clearExpiredHold(
-              'That time slot was only held for 5 minutes and has been released — please pick a time again.'
-            );
+            // err.userMessage is already resolved via the existing error-messages.const.ts
+            // mechanism — reused here rather than duplicating the string.
+            this.bookingState.clearExpiredHold(err.userMessage);
             this.router.navigateByUrl('/book/schedule');
             return;
           }

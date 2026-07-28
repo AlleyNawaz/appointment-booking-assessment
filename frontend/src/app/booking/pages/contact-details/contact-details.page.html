@@ -1,41 +1,41 @@
-<h1>Contact Information</h1>
+<h1>{{ 'booking.contactDetails.title' | translate }}</h1>
 
 <form [formGroup]="contactForm" (ngSubmit)="submit()">
   <div class="form-field">
-    <label for="fullName">Full name</label>
+    <label for="fullName">{{ 'booking.contactDetails.fullName' | translate }}</label>
     <input id="fullName" type="text" formControlName="fullName" [attr.aria-invalid]="contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched" />
     @if (contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched) {
       <p role="alert" aria-live="polite" class="form-field__error">
-        Enter a name between 2 and 100 characters (letters, spaces, hyphens, apostrophes, periods only).
+        {{ 'booking.contactDetails.fullNameError' | translate }}
       </p>
     }
   </div>
 
   <div class="form-field">
-    <label for="email">Email</label>
+    <label for="email">{{ 'booking.contactDetails.email' | translate }}</label>
     <input id="email" type="email" formControlName="email" [attr.aria-invalid]="contactForm.controls.email.invalid && contactForm.controls.email.touched" />
     @if (contactForm.controls.email.invalid && contactForm.controls.email.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">Enter a valid email address.</p>
+      <p role="alert" aria-live="polite" class="form-field__error">{{ 'booking.contactDetails.emailError' | translate }}</p>
     }
   </div>
 
   <div class="form-field">
-    <label for="phone">Phone</label>
+    <label for="phone">{{ 'booking.contactDetails.phone' | translate }}</label>
     <input id="phone" type="tel" formControlName="phone" placeholder="+14155551234" [attr.aria-invalid]="contactForm.controls.phone.invalid && contactForm.controls.phone.touched" />
     @if (contactForm.controls.phone.invalid && contactForm.controls.phone.touched) {
       <p role="alert" aria-live="polite" class="form-field__error">
-        Enter a phone number in international format, e.g. +14155551234.
+        {{ 'booking.contactDetails.phoneError' | translate }}
       </p>
     }
   </div>
 
   <div class="form-field">
-    <label for="notes">Notes (optional)</label>
+    <label for="notes">{{ 'booking.contactDetails.notes' | translate }} ({{ 'common.optional' | translate }})</label>
     <textarea id="notes" formControlName="notes" maxlength="500"></textarea>
     @if (contactForm.controls.notes.invalid && contactForm.controls.notes.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">Notes must be at most 500 characters.</p>
+      <p role="alert" aria-live="polite" class="form-field__error">{{ 'booking.contactDetails.notesError' | translate }}</p>
     }
   </div>
 
-  <button type="submit">Continue to Review</button>
+  <button type="submit">{{ 'booking.contactDetails.continue' | translate }}</button>
 </form>

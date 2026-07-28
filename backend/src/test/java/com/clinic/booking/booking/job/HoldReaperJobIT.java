@@ -1,9 +1,11 @@
 package com.clinic.booking.booking.job;
 
+import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
@@ -53,7 +55,17 @@ class HoldReaperJobIT {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    @Qualifier("holdExpiryCounter")
+    private Counter holdExpiryCounter;
+
     private long providerId;
+
+    // §7.7: uq_hold_slot is unique on (provider_id, start_datetime) — every call to
+    // insertHold() within the same test shares providerId, so a monotonic per-call second
+    // offset guarantees a distinct start_datetime instead of relying on Instant.now() alone,
+    // which can collide when successive calls land within the same DATETIME(3) millisecond.
+    private int holdSequence;
 
     @BeforeEach
     void seedTestProviderAndResetLock() {
@@ -81,6 +93,20 @@ class HoldReaperJobIT {
         holdReaperJob.reapExpiredHolds();
 
         assertThat(remainingHoldCount()).isEqualTo(1);
+    }
+
+    @Test
+    void reaper_incrementsTheHoldExpiryCounter_byTheNumberOfHoldsReaped() {
+        // PRD §14: "hold-expiry rate" — delta-based, since the Counter is a process-lifetime
+        // singleton shared across every test in this class.
+        double before = holdExpiryCounter.count();
+        insertHold(Instant.now().minusSeconds(60)); // expired
+        insertHold(Instant.now().minusSeconds(120)); // expired
+        insertHold(Instant.now().plusSeconds(300)); // still active
+
+        holdReaperJob.reapExpiredHolds();
+
+        assertThat(holdExpiryCounter.count()).isEqualTo(before + 2);
     }
 
     @Test
@@ -139,7 +165,7 @@ class HoldReaperJobIT {
      * making this raw insert agree with Hibernate's convention for the same column.
      */
     private void insertHold(Instant expiresAt) {
-        Instant start = Instant.now().plusSeconds(3600);
+        Instant start = Instant.now().plusSeconds(3600).plusSeconds(holdSequence++);
         String holdToken = UUID.randomUUID().toString();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(

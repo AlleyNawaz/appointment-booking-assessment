@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -34,7 +36,12 @@ describe('AppointmentDetailPage', () => {
     };
     TestBed.configureTestingModule({
       imports: [AppointmentDetailPage],
-      providers: [provideRouter([]), { provide: AppointmentApiService, useValue: apiSpies }],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AppointmentApiService, useValue: apiSpies },
+      ],
     });
     TestBed.inject(StaffSessionService).setSession({
       username: 'test-user',

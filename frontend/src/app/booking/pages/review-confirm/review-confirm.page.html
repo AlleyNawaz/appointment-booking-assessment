@@ -1,39 +1,38 @@
 @if (result(); as appointment) {
   @if (appointment.status === 'CONFIRMED') {
     <div>
-      <h1>Appointment Confirmed</h1>
-      <p>Your appointment is confirmed. A confirmation email has been sent.</p>
-      <p>Confirmation number: <strong>{{ appointment.confirmationToken }}</strong></p>
+      <h1>{{ 'booking.reviewConfirm.confirmedTitle' | translate }}</h1>
+      <p>{{ 'booking.reviewConfirm.confirmedBody' | translate }}</p>
+      <p>{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
     </div>
   } @else {
     <div>
-      <h1>Appointment Pending Review</h1>
+      <h1>{{ 'booking.reviewConfirm.pendingTitle' | translate }}</h1>
       <p>
-        Your appointment request has been submitted for approval. A confirmation email has been sent, and staff
-        will respond within 24 hours.
+        {{ 'booking.reviewConfirm.pendingBody' | translate }}
       </p>
-      <p>Confirmation number: <strong>{{ appointment.confirmationToken }}</strong></p>
+      <p>{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
     </div>
   }
 } @else {
-  <h1>Review &amp; Confirm</h1>
+  <h1>{{ 'booking.reviewConfirm.title' | translate }}</h1>
 
   <dl>
-    <dt>Appointment type</dt>
+    <dt>{{ 'booking.reviewConfirm.appointmentType' | translate }}</dt>
     <dd>{{ appointmentTypeName() }}</dd>
-    <dt>Provider</dt>
+    <dt>{{ 'booking.reviewConfirm.provider' | translate }}</dt>
     <dd>{{ providerName() }}</dd>
-    <dt>Date &amp; time</dt>
+    <dt>{{ 'booking.reviewConfirm.dateTime' | translate }}</dt>
     <dd>{{ slotDisplay() }}</dd>
     @if (contact(); as contactInfo) {
-      <dt>Name</dt>
+      <dt>{{ 'booking.reviewConfirm.name' | translate }}</dt>
       <dd>{{ contactInfo.fullName }}</dd>
-      <dt>Email</dt>
+      <dt>{{ 'booking.reviewConfirm.email' | translate }}</dt>
       <dd>{{ contactInfo.email }}</dd>
-      <dt>Phone</dt>
+      <dt>{{ 'booking.reviewConfirm.phone' | translate }}</dt>
       <dd>{{ contactInfo.phone }}</dd>
       @if (contactInfo.notes) {
-        <dt>Notes</dt>
+        <dt>{{ 'booking.reviewConfirm.notes' | translate }}</dt>
         <dd>{{ contactInfo.notes }}</dd>
       }
     }
@@ -44,6 +43,6 @@
   }
 
   <button type="button" [disabled]="submitting()" (click)="submit()">
-    {{ submitting() ? 'Submitting…' : 'Confirm Booking' }}
+    {{ (submitting() ? 'booking.reviewConfirm.submitting' : 'booking.reviewConfirm.confirmBooking') | translate }}
   </button>
 }

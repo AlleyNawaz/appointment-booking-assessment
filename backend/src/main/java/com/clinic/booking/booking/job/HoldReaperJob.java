@@ -1,7 +1,9 @@
 package com.clinic.booking.booking.job;
 
 import com.clinic.booking.booking.repository.SlotHoldRepository;
+import io.micrometer.core.instrument.Counter;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +31,12 @@ import java.time.Instant;
 public class HoldReaperJob {
 
     private final SlotHoldRepository slotHoldRepository;
+    private final Counter holdExpiryCounter;
 
-    public HoldReaperJob(SlotHoldRepository slotHoldRepository) {
+    public HoldReaperJob(
+            SlotHoldRepository slotHoldRepository, @Qualifier("holdExpiryCounter") Counter holdExpiryCounter) {
         this.slotHoldRepository = slotHoldRepository;
+        this.holdExpiryCounter = holdExpiryCounter;
     }
 
     @Scheduled(
@@ -40,6 +45,7 @@ public class HoldReaperJob {
     @SchedulerLock(name = "holdReaperJob", lockAtLeastFor = "PT1M", lockAtMostFor = "PT2M")
     @Transactional
     public void reapExpiredHolds() {
-        slotHoldRepository.deleteByExpiresAtBefore(Instant.now());
+        long deleted = slotHoldRepository.deleteByExpiresAtBefore(Instant.now());
+        holdExpiryCounter.increment(deleted);
     }
 }

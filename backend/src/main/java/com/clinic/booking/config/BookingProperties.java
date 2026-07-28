@@ -62,6 +62,12 @@ public class BookingProperties {
     /** §12.7/§19 #26: staff may correct a MISSED appointment to COMPLETED within this many days of end_datetime. */
     private int missedCorrectionWindowDays = 7;
 
+    /** §15.7: per-IP cap on GET /booking/availability requests per minute. */
+    private int availabilityRateLimitPerMinute = 10;
+
+    /** §15.7/§12.5: per-IP cap on POST /booking/holds + POST /booking/appointments combined, per 10-minute window. */
+    private int bookingRateLimitPerTenMinutes = 5;
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -196,5 +202,21 @@ public class BookingProperties {
 
     public void setMissedCorrectionWindowDays(int missedCorrectionWindowDays) {
         this.missedCorrectionWindowDays = missedCorrectionWindowDays;
+    }
+
+    public int getAvailabilityRateLimitPerMinute() {
+        return availabilityRateLimitPerMinute;
+    }
+
+    public void setAvailabilityRateLimitPerMinute(int availabilityRateLimitPerMinute) {
+        this.availabilityRateLimitPerMinute = availabilityRateLimitPerMinute;
+    }
+
+    public int getBookingRateLimitPerTenMinutes() {
+        return bookingRateLimitPerTenMinutes;
+    }
+
+    public void setBookingRateLimitPerTenMinutes(int bookingRateLimitPerTenMinutes) {
+        this.bookingRateLimitPerTenMinutes = bookingRateLimitPerTenMinutes;
     }
 }

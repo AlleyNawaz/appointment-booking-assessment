@@ -1,11 +1,11 @@
 <app-staff-nav />
 
-<h1>Appointments</h1>
+<h1>{{ 'staff.appointmentList.title' | translate }}</h1>
 
 <div class="filters">
-  <label for="statusFilter">Status</label>
+  <label for="statusFilter">{{ 'staff.appointmentList.statusLabel' | translate }}</label>
   <select id="statusFilter" [value]="statusFilter()" (change)="onStatusFilterChange($any($event.target).value)">
-    <option value="">All</option>
+    <option value="">{{ 'staff.appointmentList.statusAll' | translate }}</option>
     <option value="PENDING">Pending</option>
     <option value="CONFIRMED">Confirmed</option>
     <option value="COMPLETED">Completed</option>
@@ -15,7 +15,7 @@
     <option value="MISSED">Missed</option>
   </select>
 
-  <label for="providerIdFilter">Provider ID</label>
+  <label for="providerIdFilter">{{ 'staff.appointmentList.providerIdLabel' | translate }}</label>
   <input
     id="providerIdFilter"
     type="number"
@@ -23,10 +23,10 @@
     (change)="onProviderIdFilterChange($any($event.target).value)"
   />
 
-  <label for="fromFilter">From</label>
+  <label for="fromFilter">{{ 'staff.appointmentList.fromLabel' | translate }}</label>
   <input id="fromFilter" type="date" [value]="fromFilter()" (change)="onFromFilterChange($any($event.target).value)" />
 
-  <label for="toFilter">To</label>
+  <label for="toFilter">{{ 'staff.appointmentList.toLabel' | translate }}</label>
   <input id="toFilter" type="date" [value]="toFilter()" (change)="onToFilterChange($any($event.target).value)" />
 </div>
 
@@ -34,16 +34,16 @@
   [loading]="loading()"
   [error]="error()"
   [empty]="page() !== null && page()!.content.length === 0"
-  emptyMessage="No appointments match these filters."
+  [emptyMessage]="'staff.appointmentList.empty' | translate"
 >
   @if (page(); as result) {
     <table>
       <thead>
         <tr>
-          <th>Patient</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Status</th>
+          <th>{{ 'staff.appointmentList.columnPatient' | translate }}</th>
+          <th>{{ 'staff.appointmentList.columnDate' | translate }}</th>
+          <th>{{ 'staff.appointmentList.columnTime' | translate }}</th>
+          <th>{{ 'staff.appointmentList.columnStatus' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -59,10 +59,10 @@
     </table>
 
     <div class="pagination">
-      <button type="button" [disabled]="result.page === 0" (click)="goToPage(result.page - 1)">Previous</button>
-      <span>Page {{ result.page + 1 }} of {{ result.totalPages || 1 }}</span>
+      <button type="button" [disabled]="result.page === 0" (click)="goToPage(result.page - 1)">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.pageOf' | translate:{ page: '' + (result.page + 1), totalPages: '' + (result.totalPages || 1) } }}</span>
       <button type="button" [disabled]="result.page + 1 >= result.totalPages" (click)="goToPage(result.page + 1)">
-        Next
+        {{ 'common.next' | translate }}
       </button>
     </div>
   }

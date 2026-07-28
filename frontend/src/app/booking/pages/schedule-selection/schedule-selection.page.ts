@@ -6,6 +6,7 @@ import { AppHttpError } from '../../../core/interceptors/http-error.interceptor'
 import { CLINIC_TIMEZONE, formatClinicTime } from '../../../core/clinic-info.const';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService } from '../../state/booking-state.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 const MAX_BOOKING_WINDOW_DAYS = 90;
 
@@ -30,7 +31,7 @@ function addDays(isoDate: string, days: number): string {
 @Component({
   selector: 'app-schedule-selection-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './schedule-selection.page.html',
   styleUrl: './schedule-selection.page.scss',

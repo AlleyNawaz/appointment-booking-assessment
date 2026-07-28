@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -14,7 +16,12 @@ describe('AuditLogPage', () => {
       .and.returnValue(of({ content: [], page: 0, size: 20, totalElements: 0, totalPages: 0 }));
     TestBed.configureTestingModule({
       imports: [AuditLogPage],
-      providers: [provideRouter([]), { provide: AuditLogApiService, useValue: { list: listSpy } }],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AuditLogApiService, useValue: { list: listSpy } },
+      ],
     });
   });
 

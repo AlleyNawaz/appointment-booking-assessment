@@ -1,18 +1,18 @@
 <app-staff-nav />
 
-<h1>Admin — Appointment Types</h1>
+<h1>{{ 'staff.appointmentTypesAdmin.title' | translate }}</h1>
 
 <app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="types() !== null && types()!.length === 0">
   @if (types(); as typeList) {
     <table>
       <thead>
         <tr>
-          <th>Code</th>
-          <th>Display Name</th>
-          <th>Duration</th>
-          <th>Buffer</th>
-          <th>Requires Approval</th>
-          <th>Active</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnCode' | translate }}</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnDisplayName' | translate }}</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnDuration' | translate }}</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnBuffer' | translate }}</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnRequiresApproval' | translate }}</th>
+          <th>{{ 'staff.appointmentTypesAdmin.columnActive' | translate }}</th>
           @if (canWrite()) {
             <th></th>
           }
@@ -25,12 +25,12 @@
             <td>{{ type.displayName }}</td>
             <td>{{ type.durationMinutes }}</td>
             <td>{{ type.bufferMinutes }}</td>
-            <td>{{ type.requiresApproval ? 'Yes' : 'No' }}</td>
-            <td>{{ type.isActive ? 'Yes' : 'No' }}</td>
+            <td>{{ (type.requiresApproval ? 'common.yes' : 'common.no') | translate }}</td>
+            <td>{{ (type.isActive ? 'common.yes' : 'common.no') | translate }}</td>
             @if (canWrite()) {
               <td>
                 @if (type.isActive) {
-                  <button type="button" (click)="deactivate(type)">Deactivate</button>
+                  <button type="button" (click)="deactivate(type)">{{ 'common.deactivate' | translate }}</button>
                 }
               </td>
             }
@@ -42,17 +42,17 @@
 </app-async-state-wrapper>
 
 @if (canWrite()) {
-  <h2>Add Appointment Type</h2>
-  <label for="code">Code</label>
+  <h2>{{ 'staff.appointmentTypesAdmin.addTitle' | translate }}</h2>
+  <label for="code">{{ 'staff.appointmentTypesAdmin.codeLabel' | translate }}</label>
   <input id="code" type="text" [value]="code()" (input)="code.set($any($event.target).value)" />
 
-  <label for="displayName">Display Name</label>
+  <label for="displayName">{{ 'staff.appointmentTypesAdmin.displayNameLabel' | translate }}</label>
   <input id="displayName" type="text" [value]="displayName()" (input)="displayName.set($any($event.target).value)" />
 
-  <label for="durationMinutes">Duration (minutes)</label>
+  <label for="durationMinutes">{{ 'staff.appointmentTypesAdmin.durationLabel' | translate }}</label>
   <input id="durationMinutes" type="number" [value]="durationMinutes()" (change)="durationMinutes.set(+$any($event.target).value)" />
 
-  <label for="bufferMinutes">Buffer (minutes)</label>
+  <label for="bufferMinutes">{{ 'staff.appointmentTypesAdmin.bufferLabel' | translate }}</label>
   <input id="bufferMinutes" type="number" [value]="bufferMinutes()" (change)="bufferMinutes.set(+$any($event.target).value)" />
 
   <label for="requiresApproval">
@@ -62,12 +62,12 @@
       [checked]="requiresApproval()"
       (change)="requiresApproval.set($any($event.target).checked)"
     />
-    Requires approval
+    {{ 'staff.appointmentTypesAdmin.requiresApprovalLabel' | translate }}
   </label>
 
   @if (formError()) {
     <p role="alert" aria-live="polite">{{ formError() }}</p>
   }
 
-  <button type="button" (click)="create()">Add</button>
+  <button type="button" (click)="create()">{{ 'staff.appointmentTypesAdmin.addButton' | translate }}</button>
 }

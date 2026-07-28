@@ -6,6 +6,7 @@ import { formatClinicTime } from '../core/clinic-info.const';
 import { AppointmentDetailResponse } from '../booking/models/appointment.model';
 import { BookingApiService } from '../booking/services/booking-api.service';
 import { CLINIC_TIMEZONE } from '../core/clinic-info.const';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 
 const MAX_BOOKING_WINDOW_DAYS = 90;
 
@@ -29,7 +30,7 @@ function addDays(isoDate: string, days: number): string {
 @Component({
   selector: 'app-reschedule-action',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reschedule-action.component.html',
 })
@@ -123,9 +124,9 @@ export class RescheduleActionComponent {
             this.selectedSlot.set(null);
             this.holdToken.set(null);
             this.idempotencyKey = crypto.randomUUID();
-            this.rescheduleError.set(
-              'That time slot was only held for 5 minutes and has been released — please pick a time again.'
-            );
+            // err.userMessage is already resolved via the existing error-messages.const.ts
+            // mechanism — reused here rather than duplicating the string.
+            this.rescheduleError.set(err.userMessage);
             this.loadSlots(this.selectedDate());
             return;
           }

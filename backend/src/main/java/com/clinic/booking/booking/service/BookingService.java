@@ -23,7 +23,9 @@ import com.clinic.booking.common.exception.SlotHoldExpiredException;
 import com.clinic.booking.common.exception.ValidationException;
 import com.clinic.booking.common.util.RequestHasher;
 import com.clinic.booking.notification.EmailNotificationService;
+import io.micrometer.core.instrument.Counter;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +63,7 @@ public class BookingService {
     private final ClinicClosedDayValidator clinicClosedDayValidator;
     private final DuplicateAppointmentValidator duplicateAppointmentValidator;
     private final EmailNotificationService emailNotificationService;
+    private final Counter bookingSuccessCounter;
 
     public BookingService(
             AppointmentRepository appointmentRepository,
@@ -71,7 +74,8 @@ public class BookingService {
             BookingWindowValidator bookingWindowValidator,
             ClinicClosedDayValidator clinicClosedDayValidator,
             DuplicateAppointmentValidator duplicateAppointmentValidator,
-            EmailNotificationService emailNotificationService) {
+            EmailNotificationService emailNotificationService,
+            @Qualifier("bookingSuccessCounter") Counter bookingSuccessCounter) {
         this.appointmentRepository = appointmentRepository;
         this.slotHoldRepository = slotHoldRepository;
         this.providerRepository = providerRepository;
@@ -81,6 +85,7 @@ public class BookingService {
         this.clinicClosedDayValidator = clinicClosedDayValidator;
         this.duplicateAppointmentValidator = duplicateAppointmentValidator;
         this.emailNotificationService = emailNotificationService;
+        this.bookingSuccessCounter = bookingSuccessCounter;
     }
 
     @Transactional
@@ -144,6 +149,7 @@ public class BookingService {
 
         slotHoldRepository.delete(hold);
         emailNotificationService.sendBookingNotification(appointment);
+        bookingSuccessCounter.increment();
 
         return toResponse(appointment);
     }

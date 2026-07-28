@@ -6,12 +6,13 @@ import { StaffSessionService } from '../auth/staff-session.service';
 import { AvailabilityApiService } from './availability-api.service';
 import { AvailabilityRule, RuleType } from './availability.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/availability/hours` (PRD §4/§8.14) — provider working-hours/break rules. */
 @Component({
   selector: 'app-hours-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './hours.page.html',
 })

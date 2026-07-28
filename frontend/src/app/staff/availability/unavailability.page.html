@@ -1,9 +1,9 @@
 <app-staff-nav />
 
-<h1>Availability — Time Off</h1>
+<h1>{{ 'staff.unavailability.title' | translate }}</h1>
 
 @if (!isProvider()) {
-  <label for="providerId">Provider ID</label>
+  <label for="providerId">{{ 'staff.unavailability.providerIdLabel' | translate }}</label>
   <input id="providerId" type="number" [value]="providerIdInput()" (change)="onProviderIdChange($any($event.target).value)" />
 }
 
@@ -12,10 +12,10 @@
     <table>
       <thead>
         <tr>
-          <th>Start</th>
-          <th>End</th>
-          <th>Reason</th>
-          <th>Created By</th>
+          <th>{{ 'staff.unavailability.columnStart' | translate }}</th>
+          <th>{{ 'staff.unavailability.columnEnd' | translate }}</th>
+          <th>{{ 'staff.unavailability.columnReason' | translate }}</th>
+          <th>{{ 'staff.unavailability.columnCreatedBy' | translate }}</th>
           @if (canWrite()) {
             <th></th>
           }
@@ -29,7 +29,7 @@
             <td>{{ entry.reason }}</td>
             <td>{{ entry.createdBy }}</td>
             @if (canWrite()) {
-              <td><button type="button" (click)="delete(entry.id)">Delete</button></td>
+              <td><button type="button" (click)="delete(entry.id)">{{ 'common.delete' | translate }}</button></td>
             }
           </tr>
         }
@@ -39,25 +39,25 @@
 </app-async-state-wrapper>
 
 @if (canWrite()) {
-  <h2>Add Time Off</h2>
-  <label for="startDatetime">Start</label>
+  <h2>{{ 'staff.unavailability.addTitle' | translate }}</h2>
+  <label for="startDatetime">{{ 'staff.unavailability.startLabel' | translate }}</label>
   <input id="startDatetime" type="datetime-local" (change)="startDatetime.set($any($event.target).value)" />
 
-  <label for="endDatetime">End</label>
+  <label for="endDatetime">{{ 'staff.unavailability.endLabel' | translate }}</label>
   <input id="endDatetime" type="datetime-local" (change)="endDatetime.set($any($event.target).value)" />
 
-  <label for="reason">Reason</label>
+  <label for="reason">{{ 'staff.unavailability.reasonLabel' | translate }}</label>
   <input id="reason" type="text" [value]="reason()" (input)="reason.set($any($event.target).value)" />
 
   @if (formError()) {
     <p role="alert" aria-live="polite">{{ formError() }}</p>
   }
 
-  <button type="button" (click)="create()">Add</button>
+  <button type="button" (click)="create()">{{ 'staff.unavailability.addButton' | translate }}</button>
 
   @if (lastAffectedAppointments() && lastAffectedAppointments()!.length > 0) {
     <div class="affected-appointments">
-      <p>The following appointments overlap this block and need attention:</p>
+      <p>{{ 'staff.unavailability.affectedAppointmentsWarning' | translate }}</p>
       <ul>
         @for (appt of lastAffectedAppointments(); track appt.confirmationToken) {
           <li>{{ appt.confirmationToken }} — {{ appt.startDatetime }} ({{ appt.status }})</li>

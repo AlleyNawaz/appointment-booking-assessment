@@ -1,10 +1,10 @@
 <div class="reschedule-section">
   @if (!expanded()) {
-    <button type="button" (click)="start()">Reschedule Appointment</button>
+    <button type="button" (click)="start()">{{ 'appointmentLookup.reschedule.startButton' | translate }}</button>
   } @else {
-    <h2>Reschedule Appointment</h2>
+    <h2>{{ 'appointmentLookup.reschedule.title' | translate }}</h2>
 
-    <label for="rescheduleDate">New date</label>
+    <label for="rescheduleDate">{{ 'appointmentLookup.reschedule.newDateLabel' | translate }}</label>
     <input
       id="rescheduleDate"
       type="date"
@@ -15,11 +15,11 @@
     />
 
     @if (slotsLoading()) {
-      <p>Loading available times…</p>
+      <p>{{ 'common.loading' | translate }}</p>
     } @else if (slotsError()) {
       <p role="alert" aria-live="polite">{{ slotsError() }}</p>
     } @else if (selectedDate() && slots().length === 0) {
-      <p>No available times on this date.</p>
+      <p>{{ 'appointmentLookup.reschedule.noAvailableTimes' | translate }}</p>
     } @else if (slots().length > 0) {
       <ul class="slot-list">
         @for (slot of slots(); track slot) {
@@ -42,7 +42,7 @@
     }
 
     @if (holdToken()) {
-      <label for="rescheduleReason">Reason (optional)</label>
+      <label for="rescheduleReason">{{ 'appointmentLookup.reschedule.reasonLabel' | translate }}</label>
       <textarea id="rescheduleReason" [value]="reason()" (input)="reason.set($any($event.target).value)"></textarea>
 
       @if (rescheduleError()) {
@@ -50,10 +50,10 @@
       }
 
       <button type="button" [disabled]="rescheduling()" (click)="submit()">
-        {{ rescheduling() ? 'Rescheduling…' : 'Confirm Reschedule' }}
+        {{ (rescheduling() ? 'appointmentLookup.reschedule.rescheduling' : 'appointmentLookup.reschedule.confirmButton') | translate }}
       </button>
     }
 
-    <button type="button" (click)="cancel()">Cancel</button>
+    <button type="button" (click)="cancel()">{{ 'appointmentLookup.reschedule.cancelButton' | translate }}</button>
   }
 </div>

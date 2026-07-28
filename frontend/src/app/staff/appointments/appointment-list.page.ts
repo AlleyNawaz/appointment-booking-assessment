@@ -7,12 +7,13 @@ import { formatClinicDate, formatClinicTime } from '../../core/clinic-info.const
 import { AppointmentApiService } from './appointment-api.service';
 import { AppointmentPageResponse, StaffAppointment } from './staff-appointment.model';
 import { StaffNavComponent } from '../staff-nav.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** `/staff/appointments` (PRD §4.1/§8.9) — list/search with pagination and filters. */
 @Component({
   selector: 'app-appointment-list-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, StaffNavComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-list.page.html',
 })

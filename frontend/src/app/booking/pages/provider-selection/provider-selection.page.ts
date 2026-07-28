@@ -6,26 +6,27 @@ import { AppHttpError } from '../../../core/interceptors/http-error.interceptor'
 import { Provider } from '../../models/provider.model';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService } from '../../state/booking-state.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /** `/book/provider` (PRD §4/§8.3) — providers offering the previously selected type. */
 @Component({
   selector: 'app-provider-selection-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Select a Provider</h1>
+    <h1>{{ 'booking.providerSelection.title' | translate }}</h1>
     <app-async-state-wrapper
       [loading]="loading()"
       [error]="error()"
       [empty]="!loading() && !error() && providers().length === 0"
-      emptyMessage="No providers currently offer this appointment type."
+      [emptyMessage]="'booking.providerSelection.empty' | translate"
     >
       <ul class="option-list">
         @for (provider of providers(); track provider.id) {
           <li>
             <button type="button" (click)="select(provider)">
-              <span>Dr. {{ provider.firstName }} {{ provider.lastName }}</span>
+              <span>{{ 'booking.providerSelection.providerNamePrefix' | translate }} {{ provider.firstName }} {{ provider.lastName }}</span>
               <span class="option-list__meta">{{ provider.specialty }}</span>
             </button>
           </li>

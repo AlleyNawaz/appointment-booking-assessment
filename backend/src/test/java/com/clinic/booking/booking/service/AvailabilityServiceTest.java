@@ -17,6 +17,7 @@ import com.clinic.booking.booking.repository.SlotHoldRepository;
 import com.clinic.booking.common.exception.BookingWindowExceededException;
 import com.clinic.booking.common.exception.InvalidAppointmentDateException;
 import com.clinic.booking.config.BookingProperties;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,6 +79,9 @@ class AvailabilityServiceTest {
     @Mock
     private ClinicHolidayRepository clinicHolidayRepository;
 
+    private final io.micrometer.core.instrument.Timer availabilityLatencyTimer =
+            new SimpleMeterRegistry().timer("test.availability.latency");
+
     @BeforeEach
     void stubNoActiveHoldsByDefault() {
         // Most tests don't concern active holds/appointments; this default keeps them from
@@ -90,7 +94,7 @@ class AvailabilityServiceTest {
     private AvailabilityService serviceWith(BookingProperties properties) {
         return new AvailabilityService(providerRepository, appointmentTypeRepository,
                 availabilityRuleRepository, unavailabilityRepository, slotHoldRepository, appointmentRepository,
-                clinicHolidayRepository, properties);
+                clinicHolidayRepository, properties, availabilityLatencyTimer);
     }
 
     private AvailabilityService defaultService() {
@@ -103,6 +107,19 @@ class AvailabilityServiceTest {
 
         assertThatThrownBy(() -> defaultService().computeAvailableSlots(PROVIDER_ID, TYPE_ID, yesterday))
                 .isInstanceOf(InvalidAppointmentDateException.class);
+    }
+
+    @Test
+    void computeAvailableSlots_recordsLatencyOnTheAvailabilityTimer_evenWhenItThrows() {
+        // PRD §14: "availability query latency" — recorded via a `finally`, so a thrown
+        // validation exception still counts as a timed invocation, not a skipped one.
+        LocalDate yesterday = LocalDate.now(ZoneId.of("America/New_York")).minusDays(1);
+        long before = availabilityLatencyTimer.count();
+
+        assertThatThrownBy(() -> defaultService().computeAvailableSlots(PROVIDER_ID, TYPE_ID, yesterday))
+                .isInstanceOf(InvalidAppointmentDateException.class);
+
+        assertThat(availabilityLatencyTimer.count()).isEqualTo(before + 1);
     }
 
     @Test

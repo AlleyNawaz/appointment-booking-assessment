@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PRD §15.6/§14: replaces the default console pattern's %msg/exception rendering with
+  masked equivalents (LogMaskingConverter/LogMaskingExceptionConverter) so a full email or
+  phone number is never emitted in any log line, including stack traces — and adds the
+  current request's X-Request-Id (RequestIdFilter, via MDC) to every line.
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <conversionRule conversionWord="maskedMsg" converterClass="com.clinic.booking.config.LogMaskingConverter"/>
+    <conversionRule conversionWord="maskedEx" converterClass="com.clinic.booking.config.LogMaskingExceptionConverter"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p [%X{requestId:--}] [%15.15t] %-40.40logger{39} : %maskedMsg%n%maskedEx</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

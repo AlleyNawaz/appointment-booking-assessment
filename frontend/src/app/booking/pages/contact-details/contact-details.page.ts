@@ -4,6 +4,7 @@ import { NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { BookingStateService } from '../../state/booking-state.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /**
  * `/book/details` (PRD §9) — reactive form mirroring §11's field rules
@@ -13,7 +14,7 @@ import { BookingStateService } from '../../state/booking-state.service';
 @Component({
   selector: 'app-contact-details-page',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './contact-details.page.html',
 })
