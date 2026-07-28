@@ -6,13 +6,13 @@
   <label for="statusFilter">{{ 'staff.appointmentList.statusLabel' | translate }}</label>
   <select id="statusFilter" [value]="statusFilter()" (change)="onStatusFilterChange($any($event.target).value)">
     <option value="">{{ 'staff.appointmentList.statusAll' | translate }}</option>
-    <option value="PENDING">Pending</option>
-    <option value="CONFIRMED">Confirmed</option>
-    <option value="COMPLETED">Completed</option>
-    <option value="REJECTED">Rejected</option>
-    <option value="CANCELLED">Cancelled</option>
-    <option value="EXPIRED">Expired</option>
-    <option value="MISSED">Missed</option>
+    <option value="PENDING">{{ 'staff.appointmentList.statusPending' | translate }}</option>
+    <option value="CONFIRMED">{{ 'staff.appointmentList.statusConfirmed' | translate }}</option>
+    <option value="COMPLETED">{{ 'staff.appointmentList.statusCompleted' | translate }}</option>
+    <option value="REJECTED">{{ 'staff.appointmentList.statusRejected' | translate }}</option>
+    <option value="CANCELLED">{{ 'staff.appointmentList.statusCancelled' | translate }}</option>
+    <option value="EXPIRED">{{ 'staff.appointmentList.statusExpired' | translate }}</option>
+    <option value="MISSED">{{ 'staff.appointmentList.statusMissed' | translate }}</option>
   </select>
 
   <label for="providerIdFilter">{{ 'staff.appointmentList.providerIdLabel' | translate }}</label>
@@ -48,7 +48,14 @@
       </thead>
       <tbody>
         @for (appointment of result.content; track appointment.id) {
-          <tr (click)="openDetail(appointment)" class="appointment-row">
+          <tr
+            role="button"
+            tabindex="0"
+            class="appointment-row"
+            (click)="openDetail(appointment)"
+            (keydown.enter)="openDetail(appointment)"
+            (keydown.space)="$event.preventDefault(); openDetail(appointment)"
+          >
             <td>{{ appointment.patientFullName }}</td>
             <td>{{ formatDate(appointment.startDateTime) }}</td>
             <td>{{ formatTime(appointment.startDateTime) }}</td>

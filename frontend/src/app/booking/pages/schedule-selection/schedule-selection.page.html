@@ -28,7 +28,7 @@
   <div class="calendar__grid" role="grid" [attr.aria-label]="'booking.scheduleSelection.calendarAriaLabel' | translate">
     <div class="calendar__week calendar__week--header" role="row">
       @for (weekday of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track weekday) {
-        <span role="columnheader">{{ weekday }}</span>
+        <span role="columnheader">{{ ('booking.scheduleSelection.weekday' + weekday) | translate }}</span>
       }
     </div>
 
