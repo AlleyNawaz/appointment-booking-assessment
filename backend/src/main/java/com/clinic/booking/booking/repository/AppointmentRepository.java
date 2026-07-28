@@ -80,4 +80,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("from") Instant from,
             @Param("to") Instant to,
             Pageable pageable);
+
+    /** §12.7/§12.11: the approval-timeout job's candidate rows — PENDING with no staff action for 24h+. */
+    List<Appointment> findByStatusAndCreatedAtBefore(Appointment.Status status, Instant cutoff);
+
+    /**
+     * §12.7/§19 #25: the nightly missed-marker job's candidate rows — still {@code CONFIRMED}
+     * (excludes rows a staff member already completed) with {@code end_datetime} 24h+ in the past.
+     */
+    List<Appointment> findByStatusAndEndDatetimeBefore(Appointment.Status status, Instant cutoff);
 }

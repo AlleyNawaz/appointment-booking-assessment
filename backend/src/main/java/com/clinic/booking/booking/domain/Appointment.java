@@ -130,9 +130,19 @@ public class Appointment {
         this.status = Status.REJECTED;
     }
 
-    /** §8.10/§12.7: staff marks a completed visit — {@code CONFIRMED → COMPLETED}. */
+    /** §8.10/§12.7: staff marks a completed visit — {@code CONFIRMED → COMPLETED} (or a MISSED correction, §19 #26). */
     public void complete() {
         this.status = Status.COMPLETED;
+    }
+
+    /** §12.7/§12.11: the approval-timeout job — {@code PENDING → EXPIRED}. */
+    public void expire() {
+        this.status = Status.EXPIRED;
+    }
+
+    /** §12.7: the nightly missed-appointment job — {@code CONFIRMED → MISSED}. */
+    public void markMissed() {
+        this.status = Status.MISSED;
     }
 
     public Long getId() {

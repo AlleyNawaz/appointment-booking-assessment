@@ -59,4 +59,10 @@ export const staffRoutes: Routes = [
     canActivate: [sessionGuard, roleGuard],
     data: { roles: ['ROLE_ADMIN', 'ROLE_SYSADMIN'] },
   },
+  {
+    path: 'audit-log',
+    loadComponent: () => import('./audit-log/audit-log.page').then((m) => m.AuditLogPage),
+    canActivate: [sessionGuard, roleGuard],
+    data: { roles: ['ROLE_SYSADMIN'] },
+  },
 ];

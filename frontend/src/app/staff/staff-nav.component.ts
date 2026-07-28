@@ -24,6 +24,9 @@ import { StaffSessionService } from './auth/staff-session.service';
         <a routerLink="/staff/admin/providers">Providers</a>
         <a routerLink="/staff/admin/settings">System Settings</a>
       }
+      @if (showAuditLog()) {
+        <a routerLink="/staff/audit-log">Audit Log</a>
+      }
     </nav>
   `,
 })
@@ -35,4 +38,7 @@ export class StaffNavComponent {
     const role = this.staffSession.role();
     return role === 'ROLE_ADMIN' || role === 'ROLE_SYSADMIN';
   });
+
+  /** §4.1: Audit Log is hidden for every role except ROLE_SYSADMIN. */
+  readonly showAuditLog = computed(() => this.staffSession.role() === 'ROLE_SYSADMIN');
 }

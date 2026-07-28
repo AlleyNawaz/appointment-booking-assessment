@@ -57,6 +57,9 @@ booking:
   login-lockout-minutes: 15
   session-idle-timeout-minutes: 30
   session-absolute-timeout-hours: 8
+  approval-timeout-hours: 24
+  missed-marker-grace-hours: 24
+  missed-correction-window-days: 7
   cors:
     allowed-origins:
       - "http://localhost:4200"

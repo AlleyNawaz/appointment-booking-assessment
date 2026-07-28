@@ -1,0 +1,61 @@
+<app-staff-nav />
+
+<h1>Audit Log</h1>
+
+<div class="filters">
+  <label for="appointmentIdFilter">Appointment ID</label>
+  <input
+    id="appointmentIdFilter"
+    type="number"
+    [value]="appointmentIdFilter()"
+    (change)="onAppointmentIdFilterChange($any($event.target).value)"
+  />
+
+  <label for="fromFilter">From</label>
+  <input id="fromFilter" type="date" [value]="fromFilter()" (change)="onFromFilterChange($any($event.target).value)" />
+
+  <label for="toFilter">To</label>
+  <input id="toFilter" type="date" [value]="toFilter()" (change)="onToFilterChange($any($event.target).value)" />
+</div>
+
+<app-async-state-wrapper
+  [loading]="loading()"
+  [error]="error()"
+  [empty]="page() !== null && page()!.content.length === 0"
+  emptyMessage="No audit log entries match these filters."
+>
+  @if (page(); as result) {
+    <table>
+      <thead>
+        <tr>
+          <th>Appointment ID</th>
+          <th>Previous Status</th>
+          <th>New Status</th>
+          <th>Changed By</th>
+          <th>Reason</th>
+          <th>Changed At</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of result.content; track entry.changedAt + entry.appointmentId) {
+          <tr>
+            <td>{{ entry.appointmentId }}</td>
+            <td>{{ entry.previousStatus }}</td>
+            <td>{{ entry.newStatus }}</td>
+            <td>{{ entry.changedBy }}</td>
+            <td>{{ entry.reason }}</td>
+            <td>{{ entry.changedAt }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button type="button" [disabled]="result.page === 0" (click)="goToPage(result.page - 1)">Previous</button>
+      <span>Page {{ result.page + 1 }} of {{ result.totalPages || 1 }}</span>
+      <button type="button" [disabled]="result.page + 1 >= result.totalPages" (click)="goToPage(result.page + 1)">
+        Next
+      </button>
+    </div>
+  }
+</app-async-state-wrapper>

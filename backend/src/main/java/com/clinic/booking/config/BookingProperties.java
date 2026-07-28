@@ -53,6 +53,15 @@ public class BookingProperties {
     /** §15.9: SESSION_ABSOLUTE_TIMEOUT_HOURS — staff session absolute expiry regardless of activity. */
     private int sessionAbsoluteTimeoutHours = 8;
 
+    /** §12.7/§12.11: APPROVAL_TIMEOUT_HOURS — a PENDING appointment with no staff action auto-expires after this. */
+    private int approvalTimeoutHours = 24;
+
+    /** §12.7: how long past end_datetime a still-CONFIRMED appointment is marked MISSED by the nightly job. */
+    private int missedMarkerGraceHours = 24;
+
+    /** §12.7/§19 #26: staff may correct a MISSED appointment to COMPLETED within this many days of end_datetime. */
+    private int missedCorrectionWindowDays = 7;
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -163,5 +172,29 @@ public class BookingProperties {
 
     public void setSessionAbsoluteTimeoutHours(int sessionAbsoluteTimeoutHours) {
         this.sessionAbsoluteTimeoutHours = sessionAbsoluteTimeoutHours;
+    }
+
+    public int getApprovalTimeoutHours() {
+        return approvalTimeoutHours;
+    }
+
+    public void setApprovalTimeoutHours(int approvalTimeoutHours) {
+        this.approvalTimeoutHours = approvalTimeoutHours;
+    }
+
+    public int getMissedMarkerGraceHours() {
+        return missedMarkerGraceHours;
+    }
+
+    public void setMissedMarkerGraceHours(int missedMarkerGraceHours) {
+        this.missedMarkerGraceHours = missedMarkerGraceHours;
+    }
+
+    public int getMissedCorrectionWindowDays() {
+        return missedCorrectionWindowDays;
+    }
+
+    public void setMissedCorrectionWindowDays(int missedCorrectionWindowDays) {
+        this.missedCorrectionWindowDays = missedCorrectionWindowDays;
     }
 }

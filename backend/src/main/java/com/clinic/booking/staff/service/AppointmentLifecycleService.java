@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,17 +113,24 @@ public class AppointmentLifecycleService {
         return StaffAppointmentResponse.from(appointment);
     }
 
-    /** §8.10: {@code CONFIRMED → COMPLETED}. */
+    /**
+     * §8.10: {@code CONFIRMED → COMPLETED} — or, per §12.7/§19 #26, a correction from
+     * {@code MISSED → COMPLETED} within {@code missedCorrectionWindowDays} of {@code end_datetime}.
+     * Beyond that window the transition is simply not exposed via this endpoint (§19 #26: "requires
+     * a database-level audit note, not an API-exposed transition"), so it falls through to the same
+     * generic invalid-transition conflict as any other unsupported starting status.
+     */
     @PreAuthorize("!hasRole('SYSADMIN') and (hasAnyRole('STAFF','ADMIN') or hasRole('PROVIDER'))")
     @Transactional
     public StaffAppointmentResponse complete(Long id, int ifMatchVersion, StaffUserPrincipal principal) {
         Appointment appointment = load(id);
         checkProviderScope(appointment, principal);
-        checkTransition(appointment, ifMatchVersion, Appointment.Status.CONFIRMED);
+        Appointment.Status previousStatus = appointment.getStatus();
+        checkCompletable(appointment, ifMatchVersion);
         appointment.complete();
         persist(appointment);
         auditLogWriter.write(
-                appointment.getId(), Appointment.Status.CONFIRMED, Appointment.Status.COMPLETED,
+                appointment.getId(), previousStatus, Appointment.Status.COMPLETED,
                 principal.getUsername(), null);
         return StaffAppointmentResponse.from(appointment);
     }
@@ -146,6 +154,23 @@ public class AppointmentLifecycleService {
      */
     private void checkTransition(Appointment appointment, int ifMatchVersion, Appointment.Status expectedStatus) {
         if (appointment.getVersion() != ifMatchVersion || appointment.getStatus() != expectedStatus) {
+            throw new StaleVersionException();
+        }
+    }
+
+    /** §12.7/§19 #26: CONFIRMED always completable; MISSED only within the correction window. */
+    private void checkCompletable(Appointment appointment, int ifMatchVersion) {
+        if (appointment.getVersion() != ifMatchVersion) {
+            throw new StaleVersionException();
+        }
+        if (appointment.getStatus() == Appointment.Status.CONFIRMED) {
+            return;
+        }
+        Instant correctionDeadline = appointment.getEndDatetime()
+                .plus(bookingProperties.getMissedCorrectionWindowDays(), ChronoUnit.DAYS);
+        boolean withinCorrectionWindow =
+                appointment.getStatus() == Appointment.Status.MISSED && correctionDeadline.isAfter(Instant.now());
+        if (!withinCorrectionWindow) {
             throw new StaleVersionException();
         }
     }

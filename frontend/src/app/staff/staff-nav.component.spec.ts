@@ -38,4 +38,24 @@ describe('StaffNavComponent', () => {
     const fixture = setRole('ROLE_SYSADMIN');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('System Settings');
   });
+
+  it('hides the audit log nav item for ROLE_STAFF', () => {
+    const fixture = setRole('ROLE_STAFF');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Audit Log');
+  });
+
+  it('hides the audit log nav item for ROLE_PROVIDER', () => {
+    const fixture = setRole('ROLE_PROVIDER');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Audit Log');
+  });
+
+  it('hides the audit log nav item for ROLE_ADMIN', () => {
+    const fixture = setRole('ROLE_ADMIN');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Audit Log');
+  });
+
+  it('shows the audit log nav item for ROLE_SYSADMIN', () => {
+    const fixture = setRole('ROLE_SYSADMIN');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Audit Log');
+  });
 });

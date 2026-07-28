@@ -39,6 +39,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AppointmentLifecycleServiceIT {
 
     private static final String KNOWN_HASH = "$2a$12$iZOajtQvoYA9vG2I/cG0POWBVtiyaczx3rSq7P1M5OlX5njcVqPVq";
+    private static final java.util.Calendar UTC_CALENDAR =
+            java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
 
     @Autowired
     private AppointmentLifecycleService appointmentLifecycleService;
@@ -154,6 +156,49 @@ class AppointmentLifecycleServiceIT {
         assertThat(rows.get(0).getChangedBy()).isEqualTo(username);
         assertThat(rows.get(0).getPreviousStatus()).isEqualTo("PENDING");
         assertThat(rows.get(0).getNewStatus()).isEqualTo("CONFIRMED");
+    }
+
+    @Test
+    void missedAppointment_canBeCorrectedToCompleted_withinSevenDays() {
+        long appointmentId = seedAppointmentWithEndDatetime(
+                providerId, Appointment.Status.MISSED, java.time.Instant.now().minus(3, java.time.temporal.ChronoUnit.DAYS));
+        actAs(StaffUser.Role.ROLE_STAFF, null);
+
+        StaffAppointmentResponse response = appointmentLifecycleService.complete(appointmentId, 0, currentPrincipal());
+
+        assertThat(response.status()).isEqualTo(Appointment.Status.COMPLETED);
+    }
+
+    @Test
+    void missedAppointment_beyondSevenDays_cannotBeCorrected() {
+        long appointmentId = seedAppointmentWithEndDatetime(
+                providerId, Appointment.Status.MISSED, java.time.Instant.now().minus(10, java.time.temporal.ChronoUnit.DAYS));
+        actAs(StaffUser.Role.ROLE_STAFF, null);
+
+        assertThatThrownBy(() -> appointmentLifecycleService.complete(appointmentId, 0, currentPrincipal()))
+                .isInstanceOf(StaleVersionException.class);
+    }
+
+    private long seedAppointmentWithEndDatetime(long providerId, Appointment.Status status, java.time.Instant endDatetime) {
+        String token = UUID.randomUUID().toString();
+        String idempotencyKey = UUID.randomUUID().toString();
+        java.time.Instant start = endDatetime.minusSeconds(1800);
+        jdbcTemplate.update(con -> {
+            java.sql.PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO appointments (confirmation_token, provider_id, appointment_type_id, "
+                            + "patient_full_name, patient_email, patient_phone, start_datetime, end_datetime, "
+                            + "status, idempotency_key, request_body_hash) "
+                            + "VALUES (?, ?, 2, 'Jordan Rivera', 'jordan@example.com', '+14155551234', ?, ?, "
+                            + "?, ?, '0000000000000000000000000000000000000000000000000000000000000000')");
+            ps.setString(1, token);
+            ps.setLong(2, providerId);
+            ps.setTimestamp(3, java.sql.Timestamp.from(start), UTC_CALENDAR);
+            ps.setTimestamp(4, java.sql.Timestamp.from(endDatetime), UTC_CALENDAR);
+            ps.setString(5, status.name());
+            ps.setString(6, idempotencyKey);
+            return ps;
+        });
+        return jdbcTemplate.queryForObject("SELECT id FROM appointments WHERE confirmation_token = ?", Long.class, token);
     }
 
     private long seedProvider() {
