@@ -67,6 +67,23 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("rangeEnd") Instant rangeEnd);
 
     /**
+     * §12.13 step 5: same overlap check as {@link #existsActiveOverlapping}, excluding the
+     * appointment being rescheduled from its own count — otherwise a patient could never
+     * reschedule their only overlapping appointment without appearing to duplicate it (§19 #52).
+     */
+    @Query("SELECT COUNT(a) > 0 FROM Appointment a WHERE LOWER(a.patientEmail) = LOWER(:email) "
+            + "AND a.patientPhone = :phone AND a.providerId = :providerId AND a.status IN :activeStatuses "
+            + "AND a.startDatetime < :rangeEnd AND a.endDatetime > :rangeStart AND a.id <> :excludeAppointmentId")
+    boolean existsActiveOverlappingExcludingId(
+            @Param("email") String email,
+            @Param("phone") String phone,
+            @Param("providerId") Long providerId,
+            @Param("activeStatuses") Collection<Appointment.Status> activeStatuses,
+            @Param("rangeStart") Instant rangeStart,
+            @Param("rangeEnd") Instant rangeEnd,
+            @Param("excludeAppointmentId") Long excludeAppointmentId);
+
+    /**
      * §8.9: staff console list — every filter is optional (bound {@code null}
      * skips that predicate), {@code to} is exclusive on {@code startDatetime}.
      */

@@ -89,6 +89,6 @@ public class AppointmentLookupService {
 
         return new AppointmentDetailResponse(appointment.getConfirmationToken(), providerName,
                 appointmentType.getDisplayName(), appointment.getStartDatetime(), appointment.getStatus(),
-                cancellationEligible);
+                cancellationEligible, appointment.getProviderId(), appointment.getAppointmentTypeId());
     }
 }

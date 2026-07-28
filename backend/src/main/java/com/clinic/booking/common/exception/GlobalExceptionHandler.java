@@ -223,6 +223,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "FEATURE_FLAG_NOT_FOUND", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(AppointmentNotReschedulableException.class)
+    public ResponseEntity<ErrorResponse> handleAppointmentNotReschedulable(
+            AppointmentNotReschedulableException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "APPOINTMENT_NOT_RESCHEDULABLE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(AppointmentStateChangedException.class)
+    public ResponseEntity<ErrorResponse> handleAppointmentStateChanged(
+            AppointmentStateChangedException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "APPOINTMENT_STATE_CHANGED", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message,
             HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(

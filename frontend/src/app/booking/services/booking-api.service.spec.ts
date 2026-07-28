@@ -60,6 +60,24 @@ describe('BookingApiService', () => {
       startDateTime: '2026-08-15T13:00:00Z',
       status: 'CANCELLED',
       cancellationEligible: false,
+      providerId: 5,
+      appointmentTypeId: 2,
+    });
+  });
+
+  it('sends the Idempotency-Key header and holdToken/reason body on reschedule (§8.19)', () => {
+    service.reschedule('token-1', { holdToken: 'hold-2', reason: 'Schedule conflict' }, 'key-456').subscribe();
+
+    const req = httpMock.expectOne('/api/v1/booking/appointments/token-1/reschedule');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.headers.get('Idempotency-Key')).toBe('key-456');
+    expect(req.request.body).toEqual({ holdToken: 'hold-2', reason: 'Schedule conflict' });
+    req.flush({
+      confirmationToken: 'token-2',
+      status: 'CONFIRMED',
+      providerId: 5,
+      startDateTime: '2026-08-20T15:00:00Z',
+      previousConfirmationToken: 'token-1',
     });
   });
 });

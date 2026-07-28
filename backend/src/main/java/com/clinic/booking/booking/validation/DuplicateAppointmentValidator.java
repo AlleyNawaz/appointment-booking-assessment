@@ -33,4 +33,15 @@ public class DuplicateAppointmentValidator {
             throw new DuplicateAppointmentException();
         }
     }
+
+    /** §12.13 step 5: same rule, excluding the appointment being rescheduled from its own count. */
+    public void validate(String patientEmail, String patientPhone, Long providerId, Instant startDateTime,
+            Instant endDateTime, Long excludeAppointmentId) {
+        boolean overlapsExistingActive = appointmentRepository.existsActiveOverlappingExcludingId(
+                patientEmail, patientPhone, providerId, ACTIVE_STATUSES, startDateTime, endDateTime,
+                excludeAppointmentId);
+        if (overlapsExistingActive) {
+            throw new DuplicateAppointmentException();
+        }
+    }
 }

@@ -28,6 +28,8 @@
           {{ cancelling() ? 'Cancelling…' : 'Cancel Appointment' }}
         </button>
       </div>
+
+      <app-reschedule-action [appointment]="appointment" [confirmationToken]="appointment.confirmationToken" />
     } @else if (appointment.status === 'CANCELLED') {
       <p>This appointment has been cancelled.</p>
     }

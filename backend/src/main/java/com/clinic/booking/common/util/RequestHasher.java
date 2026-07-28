@@ -21,6 +21,21 @@ public final class RequestHasher {
             String notes) {
         String canonical = holdToken + '|' + patientFullName + '|' + patientEmail.toLowerCase() + '|' + patientPhone
                 + '|' + (notes == null ? "" : notes);
+        return digestHex(canonical);
+    }
+
+    /**
+     * §12.13's idempotency paragraph: "the {@code Idempotency-Key} header on this endpoint
+     * follows the identical replay contract as §8.6" — same hash-then-compare mechanism,
+     * applied to the reschedule request's own fields (the original appointment's token, the
+     * new hold token, and the optional reason) rather than a fresh booking's patient fields.
+     */
+    public static String hashReschedule(String confirmationToken, String holdToken, String reason) {
+        String canonical = confirmationToken + '|' + holdToken + '|' + (reason == null ? "" : reason);
+        return digestHex(canonical);
+    }
+
+    private static String digestHex(String canonical) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(canonical.getBytes(StandardCharsets.UTF_8));

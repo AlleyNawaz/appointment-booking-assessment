@@ -1,0 +1,59 @@
+<div class="reschedule-section">
+  @if (!expanded()) {
+    <button type="button" (click)="start()">Reschedule Appointment</button>
+  } @else {
+    <h2>Reschedule Appointment</h2>
+
+    <label for="rescheduleDate">New date</label>
+    <input
+      id="rescheduleDate"
+      type="date"
+      [min]="minDate"
+      [max]="maxDate"
+      [value]="selectedDate()"
+      (change)="onDateChange($any($event.target).value)"
+    />
+
+    @if (slotsLoading()) {
+      <p>Loading available times…</p>
+    } @else if (slotsError()) {
+      <p role="alert" aria-live="polite">{{ slotsError() }}</p>
+    } @else if (selectedDate() && slots().length === 0) {
+      <p>No available times on this date.</p>
+    } @else if (slots().length > 0) {
+      <ul class="slot-list">
+        @for (slot of slots(); track slot) {
+          <li>
+            <button
+              type="button"
+              [disabled]="holdSubmitting()"
+              [class.selected]="selectedSlot() === slot"
+              (click)="selectSlot(slot)"
+            >
+              {{ formatSlotTime(slot) }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (holdError()) {
+      <p role="alert" aria-live="polite">{{ holdError() }}</p>
+    }
+
+    @if (holdToken()) {
+      <label for="rescheduleReason">Reason (optional)</label>
+      <textarea id="rescheduleReason" [value]="reason()" (input)="reason.set($any($event.target).value)"></textarea>
+
+      @if (rescheduleError()) {
+        <p role="alert" aria-live="polite">{{ rescheduleError() }}</p>
+      }
+
+      <button type="button" [disabled]="rescheduling()" (click)="submit()">
+        {{ rescheduling() ? 'Rescheduling…' : 'Confirm Reschedule' }}
+      </button>
+    }
+
+    <button type="button" (click)="cancel()">Cancel</button>
+  }
+</div>

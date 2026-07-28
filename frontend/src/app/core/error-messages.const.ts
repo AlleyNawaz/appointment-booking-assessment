@@ -23,6 +23,9 @@ export const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CREDENTIALS: 'Incorrect username or password.',
   ACCOUNT_LOCKED: 'This account is temporarily locked due to repeated failed login attempts. Please try again later.',
   STALE_VERSION: 'This appointment was updated elsewhere. Refresh and try again.',
+  APPOINTMENT_NOT_RESCHEDULABLE: 'This appointment cannot be rescheduled in its current status.',
+  APPOINTMENT_STATE_CHANGED:
+    'This appointment was modified by clinic staff and can no longer be rescheduled. Refresh and try again.',
 };
 
 export const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please try again.';

@@ -6,15 +6,17 @@ import { AppHttpError } from '../core/interceptors/http-error.interceptor';
 import { formatClinicDate, formatClinicTime } from '../core/clinic-info.const';
 import { AppointmentDetailResponse } from '../booking/models/appointment.model';
 import { BookingApiService } from '../booking/services/booking-api.service';
+import { RescheduleActionComponent } from './reschedule-action.component';
 
 /**
- * `/appointments/:token` (PRD §3/§4/§8.7/§8.8) — never gated: view and cancel
- * an existing booking, reached from the link in the confirmation email.
+ * `/appointments/:token` (PRD §3/§4/§8.7/§8.8/§8.19) — never gated for
+ * view/cancel; reschedule is gated (§6) inside {@link RescheduleActionComponent}
+ * itself via the backend. Reached from the link in the confirmation email.
  */
 @Component({
   selector: 'app-appointment-lookup-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, RescheduleActionComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-lookup.page.html',
 })
