@@ -140,6 +140,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, "ACCOUNT_LOCKED", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(StaleVersionException.class)
+    public ResponseEntity<ErrorResponse> handleStaleVersion(StaleVersionException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "STALE_VERSION", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message,
             HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(

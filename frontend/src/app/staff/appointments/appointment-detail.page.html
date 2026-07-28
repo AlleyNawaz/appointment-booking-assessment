@@ -1,0 +1,46 @@
+<button type="button" (click)="back()">&larr; Back to Appointments</button>
+
+<h1>Appointment Detail</h1>
+
+<app-async-state-wrapper [error]="error()">
+  @if (appointment(); as appointment) {
+    <dl>
+      <dt>Patient</dt>
+      <dd>{{ appointment.patientFullName }}</dd>
+      <dt>Email</dt>
+      <dd>{{ appointment.patientEmail }}</dd>
+      <dt>Phone</dt>
+      <dd>{{ appointment.patientPhone }}</dd>
+      <dt>Date</dt>
+      <dd>{{ formatDate(appointment.startDateTime) }}</dd>
+      <dt>Time</dt>
+      <dd>{{ formatTime(appointment.startDateTime) }}</dd>
+      <dt>Status</dt>
+      <dd>{{ appointment.status }}</dd>
+      @if (appointment.notes) {
+        <dt>Notes</dt>
+        <dd>{{ appointment.notes }}</dd>
+      }
+    </dl>
+
+    @if (actionError()) {
+      <p role="alert" aria-live="polite">{{ actionError() }}</p>
+    }
+
+    @if (canAct() && appointment.status === 'PENDING') {
+      <div class="actions">
+        <button type="button" [disabled]="actionInProgress()" (click)="approve()">Approve</button>
+
+        <label for="rejectReason">Reason for rejection</label>
+        <textarea id="rejectReason" [value]="rejectReason()" (input)="rejectReason.set($any($event.target).value)"></textarea>
+        <button type="button" [disabled]="actionInProgress() || !rejectReason().trim()" (click)="reject()">
+          Reject
+        </button>
+      </div>
+    } @else if (canAct() && appointment.status === 'CONFIRMED') {
+      <div class="actions">
+        <button type="button" [disabled]="actionInProgress()" (click)="complete()">Mark Completed</button>
+      </div>
+    }
+  }
+</app-async-state-wrapper>

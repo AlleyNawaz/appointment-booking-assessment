@@ -22,6 +22,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   CANCELLATION_WINDOW_EXPIRED: 'This appointment can no longer be cancelled online.',
   INVALID_CREDENTIALS: 'Incorrect username or password.',
   ACCOUNT_LOCKED: 'This account is temporarily locked due to repeated failed login attempts. Please try again later.',
+  STALE_VERSION: 'This appointment was updated elsewhere. Refresh and try again.',
 };
 
 export const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please try again.';

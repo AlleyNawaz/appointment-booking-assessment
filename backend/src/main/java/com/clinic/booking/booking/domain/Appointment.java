@@ -116,6 +116,25 @@ public class Appointment {
         this.cancellationReason = reason;
     }
 
+    /** §8.10/§12.7: staff/provider approval — {@code PENDING → CONFIRMED}. */
+    public void approve() {
+        this.status = Status.CONFIRMED;
+    }
+
+    /**
+     * §8.10/§12.7: staff/provider rejection — {@code PENDING → REJECTED}. The reason lives only
+     * in the {@code appointment_audit_log} row (§7.9) — {@code cancellation_reason} is specific
+     * to the {@code CANCELLED} transition, not a general-purpose reason column.
+     */
+    public void reject() {
+        this.status = Status.REJECTED;
+    }
+
+    /** §8.10/§12.7: staff marks a completed visit — {@code CONFIRMED → COMPLETED}. */
+    public void complete() {
+        this.status = Status.COMPLETED;
+    }
+
     public Long getId() {
         return id;
     }

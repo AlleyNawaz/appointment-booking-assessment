@@ -1,6 +1,8 @@
 package com.clinic.booking.booking.repository;
 
 import com.clinic.booking.booking.domain.Appointment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -63,4 +65,19 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("activeStatuses") Collection<Appointment.Status> activeStatuses,
             @Param("rangeStart") Instant rangeStart,
             @Param("rangeEnd") Instant rangeEnd);
+
+    /**
+     * §8.9: staff console list — every filter is optional (bound {@code null}
+     * skips that predicate), {@code to} is exclusive on {@code startDatetime}.
+     */
+    @Query("SELECT a FROM Appointment a WHERE (:status IS NULL OR a.status = :status) "
+            + "AND (:providerId IS NULL OR a.providerId = :providerId) "
+            + "AND (:from IS NULL OR a.startDatetime >= :from) "
+            + "AND (:to IS NULL OR a.startDatetime < :to)")
+    Page<Appointment> search(
+            @Param("status") Appointment.Status status,
+            @Param("providerId") Long providerId,
+            @Param("from") Instant from,
+            @Param("to") Instant to,
+            Pageable pageable);
 }
