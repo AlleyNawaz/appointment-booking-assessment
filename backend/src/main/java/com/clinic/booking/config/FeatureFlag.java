@@ -41,6 +41,15 @@ public class FeatureFlag {
         this.updatedAt = updatedAt;
     }
 
+    /** §8.17 PUT — {@code updatedAt} is set explicitly rather than relying on MySQL's ON UPDATE
+     * trigger, since that trigger only fires when a column isn't explicitly included in the
+     * UPDATE statement's value list. */
+    public void update(boolean enabled, String updatedBy) {
+        this.enabled = enabled;
+        this.updatedBy = updatedBy;
+        this.updatedAt = Instant.now();
+    }
+
     public String getFlagName() {
         return flagName;
     }

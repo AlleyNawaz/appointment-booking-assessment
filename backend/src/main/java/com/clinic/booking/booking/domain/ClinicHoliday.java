@@ -37,6 +37,19 @@ public class ClinicHoliday {
         // required by JPA
     }
 
+    public ClinicHoliday(LocalDate holidayDate, String name, boolean recurringAnnually) {
+        this.holidayDate = holidayDate;
+        this.name = name;
+        this.recurringAnnually = recurringAnnually;
+    }
+
+    /** §8.16 PUT — full replace of the mutable fields. */
+    public void update(LocalDate holidayDate, String name, boolean recurringAnnually) {
+        this.holidayDate = holidayDate;
+        this.name = name;
+        this.recurringAnnually = recurringAnnually;
+    }
+
     public Long getId() {
         return id;
     }

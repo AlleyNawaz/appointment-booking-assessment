@@ -1,0 +1,73 @@
+<app-staff-nav />
+
+<h1>Admin — Appointment Types</h1>
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="types() !== null && types()!.length === 0">
+  @if (types(); as typeList) {
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Display Name</th>
+          <th>Duration</th>
+          <th>Buffer</th>
+          <th>Requires Approval</th>
+          <th>Active</th>
+          @if (canWrite()) {
+            <th></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (type of typeList; track type.id) {
+          <tr>
+            <td>{{ type.code }}</td>
+            <td>{{ type.displayName }}</td>
+            <td>{{ type.durationMinutes }}</td>
+            <td>{{ type.bufferMinutes }}</td>
+            <td>{{ type.requiresApproval ? 'Yes' : 'No' }}</td>
+            <td>{{ type.isActive ? 'Yes' : 'No' }}</td>
+            @if (canWrite()) {
+              <td>
+                @if (type.isActive) {
+                  <button type="button" (click)="deactivate(type)">Deactivate</button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</app-async-state-wrapper>
+
+@if (canWrite()) {
+  <h2>Add Appointment Type</h2>
+  <label for="code">Code</label>
+  <input id="code" type="text" [value]="code()" (input)="code.set($any($event.target).value)" />
+
+  <label for="displayName">Display Name</label>
+  <input id="displayName" type="text" [value]="displayName()" (input)="displayName.set($any($event.target).value)" />
+
+  <label for="durationMinutes">Duration (minutes)</label>
+  <input id="durationMinutes" type="number" [value]="durationMinutes()" (change)="durationMinutes.set(+$any($event.target).value)" />
+
+  <label for="bufferMinutes">Buffer (minutes)</label>
+  <input id="bufferMinutes" type="number" [value]="bufferMinutes()" (change)="bufferMinutes.set(+$any($event.target).value)" />
+
+  <label for="requiresApproval">
+    <input
+      id="requiresApproval"
+      type="checkbox"
+      [checked]="requiresApproval()"
+      (change)="requiresApproval.set($any($event.target).checked)"
+    />
+    Requires approval
+  </label>
+
+  @if (formError()) {
+    <p role="alert" aria-live="polite">{{ formError() }}</p>
+  }
+
+  <button type="button" (click)="create()">Add</button>
+}

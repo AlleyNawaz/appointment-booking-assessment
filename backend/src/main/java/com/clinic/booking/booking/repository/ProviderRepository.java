@@ -19,4 +19,11 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
             + "WHERE t.id = :appointmentTypeId AND p.active = true AND p.deletedAt IS NULL "
             + "ORDER BY p.id")
     List<Provider> findActiveByAppointmentTypeId(@Param("appointmentTypeId") Long appointmentTypeId);
+
+    /** §8.13: GET /staff/providers includes inactive/soft-deleted providers too. */
+    List<Provider> findAllByOrderById();
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
 }

@@ -1,0 +1,68 @@
+<app-staff-nav />
+
+<h1>Availability — Time Off</h1>
+
+@if (!isProvider()) {
+  <label for="providerId">Provider ID</label>
+  <input id="providerId" type="number" [value]="providerIdInput()" (change)="onProviderIdChange($any($event.target).value)" />
+}
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="entries() !== null && entries()!.length === 0">
+  @if (entries(); as entryList) {
+    <table>
+      <thead>
+        <tr>
+          <th>Start</th>
+          <th>End</th>
+          <th>Reason</th>
+          <th>Created By</th>
+          @if (canWrite()) {
+            <th></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of entryList; track entry.id) {
+          <tr>
+            <td>{{ entry.startDatetime }}</td>
+            <td>{{ entry.endDatetime }}</td>
+            <td>{{ entry.reason }}</td>
+            <td>{{ entry.createdBy }}</td>
+            @if (canWrite()) {
+              <td><button type="button" (click)="delete(entry.id)">Delete</button></td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</app-async-state-wrapper>
+
+@if (canWrite()) {
+  <h2>Add Time Off</h2>
+  <label for="startDatetime">Start</label>
+  <input id="startDatetime" type="datetime-local" (change)="startDatetime.set($any($event.target).value)" />
+
+  <label for="endDatetime">End</label>
+  <input id="endDatetime" type="datetime-local" (change)="endDatetime.set($any($event.target).value)" />
+
+  <label for="reason">Reason</label>
+  <input id="reason" type="text" [value]="reason()" (input)="reason.set($any($event.target).value)" />
+
+  @if (formError()) {
+    <p role="alert" aria-live="polite">{{ formError() }}</p>
+  }
+
+  <button type="button" (click)="create()">Add</button>
+
+  @if (lastAffectedAppointments() && lastAffectedAppointments()!.length > 0) {
+    <div class="affected-appointments">
+      <p>The following appointments overlap this block and need attention:</p>
+      <ul>
+        @for (appt of lastAffectedAppointments(); track appt.confirmationToken) {
+          <li>{{ appt.confirmationToken }} — {{ appt.startDatetime }} ({{ appt.status }})</li>
+        }
+      </ul>
+    </div>
+  }
+}

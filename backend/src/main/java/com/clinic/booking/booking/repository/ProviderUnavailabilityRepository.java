@@ -22,4 +22,7 @@ public interface ProviderUnavailabilityRepository extends JpaRepository<Provider
             @Param("providerId") Long providerId,
             @Param("rangeStart") Instant rangeStart,
             @Param("rangeEnd") Instant rangeEnd);
+
+    /** §8.15: GET .../unavailability with no {@code from}/{@code to} filter — every row for the provider. */
+    List<ProviderUnavailability> findByProviderIdOrderByStartDatetimeAsc(Long providerId);
 }

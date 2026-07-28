@@ -6,12 +6,13 @@ import { AppHttpError } from '../../core/interceptors/http-error.interceptor';
 import { formatClinicDate, formatClinicTime } from '../../core/clinic-info.const';
 import { AppointmentApiService } from './appointment-api.service';
 import { AppointmentPageResponse, StaffAppointment } from './staff-appointment.model';
+import { StaffNavComponent } from '../staff-nav.component';
 
 /** `/staff/appointments` (PRD §4.1/§8.9) — list/search with pagination and filters. */
 @Component({
   selector: 'app-appointment-list-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent],
+  imports: [AsyncStateWrapperComponent, StaffNavComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-list.page.html',
 })

@@ -40,6 +40,15 @@ public class FeatureFlagService {
         return Boolean.TRUE.equals(cache.get(flagName, this::loadFromDatabase));
     }
 
+    /**
+     * §8.17: a flag write evicts this instance's cache entry synchronously so its own next
+     * request sees the change immediately, rather than waiting on the passive 10s TTL that
+     * still governs convergence for *other* instances in the cluster.
+     */
+    public void evict(String flagName) {
+        cache.invalidate(flagName);
+    }
+
     private Boolean loadFromDatabase(String flagName) {
         return featureFlagRepository.findById(flagName)
                 .map(FeatureFlag::isEnabled)

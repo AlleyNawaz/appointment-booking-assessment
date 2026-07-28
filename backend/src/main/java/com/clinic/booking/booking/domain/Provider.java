@@ -70,6 +70,39 @@ public class Provider {
         // required by JPA
     }
 
+    public Provider(String firstName, String lastName, String specialty, String email, String timezone,
+            boolean active) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.specialty = specialty;
+        this.email = email;
+        this.timezone = timezone;
+        this.active = active;
+    }
+
+    /** §8.13 PUT — full replace of the mutable fields. */
+    public void update(String firstName, String lastName, String specialty, String email, String timezone,
+            boolean active) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.specialty = specialty;
+        this.email = email;
+        this.timezone = timezone;
+        this.active = active;
+    }
+
+    /** §8.13 DELETE — soft delete: {@code deleted_at = NOW()}, {@code is_active = FALSE}. */
+    public void softDelete() {
+        this.active = false;
+        this.deletedAt = Instant.now();
+    }
+
+    /** §8.13 PUT .../appointment-types — replaces the full set. */
+    public void replaceAppointmentTypes(Set<AppointmentType> types) {
+        this.appointmentTypes.clear();
+        this.appointmentTypes.addAll(types);
+    }
+
     public Long getId() {
         return id;
     }

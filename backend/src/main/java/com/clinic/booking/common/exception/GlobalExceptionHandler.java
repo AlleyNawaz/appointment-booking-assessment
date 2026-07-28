@@ -145,6 +145,84 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "STALE_VERSION", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(AppointmentTypeCodeExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAppointmentTypeCodeExists(
+            AppointmentTypeCodeExistsException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "APPOINTMENT_TYPE_CODE_EXISTS", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(AppointmentTypeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAppointmentTypeNotFound(
+            AppointmentTypeNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "APPOINTMENT_TYPE_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(ProviderEmailExistsException.class)
+    public ResponseEntity<ErrorResponse> handleProviderEmailExists(
+            ProviderEmailExistsException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "PROVIDER_EMAIL_EXISTS", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(ProviderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProviderNotFound(
+            ProviderNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "PROVIDER_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidTimezoneException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTimezone(
+            InvalidTimezoneException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "INVALID_TIMEZONE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidAppointmentTypeReferenceException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAppointmentTypeReference(
+            InvalidAppointmentTypeReferenceException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "INVALID_APPOINTMENT_TYPE_REFERENCE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(AvailabilityRuleOverlapException.class)
+    public ResponseEntity<ErrorResponse> handleAvailabilityRuleOverlap(
+            AvailabilityRuleOverlapException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "AVAILABILITY_RULE_OVERLAP", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(AvailabilityRuleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAvailabilityRuleNotFound(
+            AvailabilityRuleNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "AVAILABILITY_RULE_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidTimeRangeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTimeRange(
+            InvalidTimeRangeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "INVALID_TIME_RANGE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(UnavailabilityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUnavailabilityNotFound(
+            UnavailabilityNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "UNAVAILABILITY_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(HolidayDateExistsException.class)
+    public ResponseEntity<ErrorResponse> handleHolidayDateExists(
+            HolidayDateExistsException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "HOLIDAY_DATE_EXISTS", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(HolidayNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleHolidayNotFound(
+            HolidayNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "HOLIDAY_NOT_FOUND", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(FeatureFlagNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleFeatureFlagNotFound(
+            FeatureFlagNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "FEATURE_FLAG_NOT_FOUND", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String errorCode, String message,
             HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(

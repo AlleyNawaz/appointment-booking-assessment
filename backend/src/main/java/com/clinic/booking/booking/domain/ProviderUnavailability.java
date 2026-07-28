@@ -44,6 +44,15 @@ public class ProviderUnavailability {
         // required by JPA
     }
 
+    public ProviderUnavailability(Long providerId, Instant startDatetime, Instant endDatetime, String reason,
+            String createdBy) {
+        this.providerId = providerId;
+        this.startDatetime = startDatetime;
+        this.endDatetime = endDatetime;
+        this.reason = reason;
+        this.createdBy = createdBy;
+    }
+
     public Long getId() {
         return id;
     }

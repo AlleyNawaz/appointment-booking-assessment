@@ -1,0 +1,24 @@
+<app-staff-nav />
+
+<h1>Admin — System Settings</h1>
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()">
+  @if (flag(); as flagValue) {
+    <dl>
+      <dt>Online Booking Enabled</dt>
+      <dd>{{ flagValue.isEnabled ? 'Yes' : 'No' }}</dd>
+      <dt>Last Updated By</dt>
+      <dd>{{ flagValue.updatedBy }}</dd>
+      <dt>Last Updated At</dt>
+      <dd>{{ flagValue.updatedAt }}</dd>
+    </dl>
+
+    @if (toggleError()) {
+      <p role="alert" aria-live="polite">{{ toggleError() }}</p>
+    }
+
+    <button type="button" [disabled]="toggling()" (click)="toggle()">
+      {{ flagValue.isEnabled ? 'Disable Online Booking' : 'Enable Online Booking' }}
+    </button>
+  }
+</app-async-state-wrapper>

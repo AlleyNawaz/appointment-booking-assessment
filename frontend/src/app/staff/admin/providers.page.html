@@ -1,0 +1,64 @@
+<app-staff-nav />
+
+<h1>Admin — Providers</h1>
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="providers() !== null && providers()!.length === 0">
+  @if (providers(); as providerList) {
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Specialty</th>
+          <th>Email</th>
+          <th>Timezone</th>
+          <th>Active</th>
+          @if (canWrite()) {
+            <th></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (provider of providerList; track provider.id) {
+          <tr>
+            <td>{{ provider.firstName }} {{ provider.lastName }}</td>
+            <td>{{ provider.specialty }}</td>
+            <td>{{ provider.email }}</td>
+            <td>{{ provider.timezone }}</td>
+            <td>{{ provider.isActive ? 'Yes' : 'No' }}</td>
+            @if (canWrite()) {
+              <td>
+                @if (provider.isActive) {
+                  <button type="button" (click)="softDelete(provider)">Deactivate</button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</app-async-state-wrapper>
+
+@if (canWrite()) {
+  <h2>Add Provider</h2>
+  <label for="firstName">First Name</label>
+  <input id="firstName" type="text" [value]="firstName()" (input)="firstName.set($any($event.target).value)" />
+
+  <label for="lastName">Last Name</label>
+  <input id="lastName" type="text" [value]="lastName()" (input)="lastName.set($any($event.target).value)" />
+
+  <label for="specialty">Specialty</label>
+  <input id="specialty" type="text" [value]="specialty()" (input)="specialty.set($any($event.target).value)" />
+
+  <label for="email">Email</label>
+  <input id="email" type="email" [value]="email()" (input)="email.set($any($event.target).value)" />
+
+  <label for="timezone">Timezone</label>
+  <input id="timezone" type="text" [value]="timezone()" (input)="timezone.set($any($event.target).value)" />
+
+  @if (formError()) {
+    <p role="alert" aria-live="polite">{{ formError() }}</p>
+  }
+
+  <button type="button" (click)="create()">Add</button>
+}

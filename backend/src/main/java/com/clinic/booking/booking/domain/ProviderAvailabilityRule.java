@@ -48,6 +48,23 @@ public class ProviderAvailabilityRule {
         // required by JPA
     }
 
+    public ProviderAvailabilityRule(Long providerId, Integer dayOfWeek, LocalTime startTime, LocalTime endTime,
+            RuleType ruleType) {
+        this.providerId = providerId;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.ruleType = ruleType;
+    }
+
+    /** §8.14 PUT — full replace of the mutable fields ({@code providerId} never changes on update). */
+    public void update(Integer dayOfWeek, LocalTime startTime, LocalTime endTime, RuleType ruleType) {
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.ruleType = ruleType;
+    }
+
     public Long getId() {
         return id;
     }

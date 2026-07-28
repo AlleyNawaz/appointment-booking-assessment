@@ -1,0 +1,63 @@
+<app-staff-nav />
+
+<h1>Availability — Hours</h1>
+
+@if (!isProvider()) {
+  <label for="providerId">Provider ID</label>
+  <input id="providerId" type="number" [value]="providerIdInput()" (change)="onProviderIdChange($any($event.target).value)" />
+}
+
+<app-async-state-wrapper [loading]="loading()" [error]="error()" [empty]="rules() !== null && rules()!.length === 0">
+  @if (rules(); as ruleList) {
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Type</th>
+          @if (canWrite()) {
+            <th></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (rule of ruleList; track rule.id) {
+          <tr>
+            <td>{{ rule.dayOfWeek }}</td>
+            <td>{{ rule.startTime }}</td>
+            <td>{{ rule.endTime }}</td>
+            <td>{{ rule.ruleType }}</td>
+            @if (canWrite()) {
+              <td><button type="button" (click)="deleteRule(rule.id)">Delete</button></td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</app-async-state-wrapper>
+
+@if (canWrite()) {
+  <h2>Add Rule</h2>
+  <label for="dayOfWeek">Day of week (0=Sunday)</label>
+  <input id="dayOfWeek" type="number" min="0" max="6" [value]="dayOfWeek()" (change)="dayOfWeek.set(+$any($event.target).value)" />
+
+  <label for="startTime">Start</label>
+  <input id="startTime" type="time" step="1" [value]="startTime()" (change)="startTime.set($any($event.target).value)" />
+
+  <label for="endTime">End</label>
+  <input id="endTime" type="time" step="1" [value]="endTime()" (change)="endTime.set($any($event.target).value)" />
+
+  <label for="ruleType">Type</label>
+  <select id="ruleType" [value]="ruleType()" (change)="ruleType.set($any($event.target).value)">
+    <option value="WORKING">Working</option>
+    <option value="BREAK">Break</option>
+  </select>
+
+  @if (formError()) {
+    <p role="alert" aria-live="polite">{{ formError() }}</p>
+  }
+
+  <button type="button" (click)="addRule()">Add Rule</button>
+}

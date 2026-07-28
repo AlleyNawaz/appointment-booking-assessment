@@ -12,4 +12,11 @@ public interface AppointmentTypeRepository extends JpaRepository<AppointmentType
      * patient-facing selection list, so deactivated types are never offered.
      */
     List<AppointmentType> findByActiveTrueOrderById();
+
+    /** §8.12: GET /staff/appointment-types includes inactive types too. */
+    List<AppointmentType> findAllByOrderById();
+
+    boolean existsByCode(String code);
+
+    boolean existsByCodeAndIdNot(String code, Long id);
 }

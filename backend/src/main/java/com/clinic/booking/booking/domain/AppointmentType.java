@@ -49,6 +49,32 @@ public class AppointmentType {
         // required by JPA
     }
 
+    public AppointmentType(String code, String displayName, Integer durationMinutes, Integer bufferMinutes,
+            boolean requiresApproval, boolean active) {
+        this.code = code;
+        this.displayName = displayName;
+        this.durationMinutes = durationMinutes;
+        this.bufferMinutes = bufferMinutes;
+        this.requiresApproval = requiresApproval;
+        this.active = active;
+    }
+
+    /** §8.12 PUT — full replace of the mutable fields. */
+    public void update(String code, String displayName, Integer durationMinutes, Integer bufferMinutes,
+            boolean requiresApproval, boolean active) {
+        this.code = code;
+        this.displayName = displayName;
+        this.durationMinutes = durationMinutes;
+        this.bufferMinutes = bufferMinutes;
+        this.requiresApproval = requiresApproval;
+        this.active = active;
+    }
+
+    /** §8.12 DELETE — deactivates only; this table has no {@code deleted_at} (§7.2). */
+    public void deactivate() {
+        this.active = false;
+    }
+
     public Long getId() {
         return id;
     }
