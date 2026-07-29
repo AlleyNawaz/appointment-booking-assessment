@@ -70,8 +70,8 @@ booking:
   approval-timeout-hours: 24
   missed-marker-grace-hours: 24
   missed-correction-window-days: 7
-  availability-rate-limit-per-minute: 10
-  booking-rate-limit-per-ten-minutes: 5
+  availability-rate-limit-per-minute: 1000
+  booking-rate-limit-per-ten-minutes: 1000
   cors:
     allowed-origins:
       - "http://localhost:4200"
