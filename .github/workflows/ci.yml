@@ -41,6 +41,7 @@ jobs:
             mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot && break
             sleep 2
           done
+          mysql -h 127.0.0.1 -P 3306 -u root -proot -e "CREATE DATABASE IF NOT EXISTS booking_db_test; GRANT ALL PRIVILEGES ON booking_db_test.* TO 'booking_app'@'%'; FLUSH PRIVILEGES;"
 
       - name: Build and run tests (applies Flyway migrations against MySQL)
         working-directory: backend
