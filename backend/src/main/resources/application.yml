@@ -76,7 +76,7 @@ booking:
   hold-duration-minutes: 5
   min-lead-time-hours: 24
   cancellation-cutoff-hours: 4
-  clinic-phone-number: "+1-555-0100"
+  clinic-phone-number: "+923137607987"
   bcrypt-strength: 12
   min-password-length: 12
   max-password-length: 72
