@@ -91,5 +91,5 @@ booking:
   notification-bcc-email: ${NOTIFICATION_BCC_EMAIL:}
   cors:
     allowed-origins:
-      - "http://localhost:4200"
+      - "${CORS_ALLOWED_ORIGIN:http://localhost:4200}"
 
