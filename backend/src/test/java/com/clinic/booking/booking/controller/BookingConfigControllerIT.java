@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,6 +43,33 @@ class BookingConfigControllerIT {
     @AfterEach
     void resetFlagToSeededOffState() {
         jdbcTemplate.update(FLAG_SQL, false);
+    }
+
+    /**
+     * The demo-seed migration (V14, applied once and later removed from the classpath — see
+     * {@code providers}/{@code provider_appointment_types} rows for "Sarah Jenkins") means this
+     * environment's provider list is no longer reliably empty, but depending on those specific
+     * rows still being present at query time coupled this test's outcome to whatever other IT
+     * class happens to run around it in the same suite. Every other IT class in this codebase
+     * creates its own disposable fixture instead of depending on ambient seed data; this test
+     * now does the same, making it self-contained regardless of execution order.
+     */
+    private long insertDedicatedProviderForAppointmentType(long appointmentTypeId) {
+        String email = "booking-config-it-" + UUID.randomUUID() + "@example.com";
+        jdbcTemplate.update(
+                "INSERT INTO providers (first_name, last_name, specialty, email, timezone, is_active) "
+                        + "VALUES ('Test', 'Provider', 'General Medicine', ?, 'America/New_York', TRUE)",
+                email);
+        long providerId = jdbcTemplate.queryForObject("SELECT id FROM providers WHERE email = ?", Long.class, email);
+        jdbcTemplate.update(
+                "INSERT INTO provider_appointment_types (provider_id, appointment_type_id) VALUES (?, ?)",
+                providerId, appointmentTypeId);
+        return providerId;
+    }
+
+    private void deleteProvider(long providerId) {
+        jdbcTemplate.update("DELETE FROM provider_appointment_types WHERE provider_id = ?", providerId);
+        jdbcTemplate.update("DELETE FROM providers WHERE id = ?", providerId);
     }
 
     @Test
@@ -75,10 +103,18 @@ class BookingConfigControllerIT {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void gatedEndpoints_succeedWithDtoShapedResponses_whenFlagIsOn() {
         jdbcTemplate.update(FLAG_SQL, true);
+        long dedicatedProviderId = insertDedicatedProviderForAppointmentType(2L);
+        try {
+            assertGatedEndpointsSucceedWithDtoShapedResponses();
+        } finally {
+            deleteProvider(dedicatedProviderId);
+        }
+    }
 
+    @SuppressWarnings("unchecked")
+    private void assertGatedEndpointsSucceedWithDtoShapedResponses() {
         ResponseEntity<List> typesResponse =
                 restTemplate.getForEntity("/api/v1/booking/appointment-types", List.class);
         assertThat(typesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -97,9 +133,8 @@ class BookingConfigControllerIT {
         ResponseEntity<List> providersResponse =
                 restTemplate.getForEntity("/api/v1/booking/providers?appointmentTypeId=2", List.class);
         assertThat(providersResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        // V14's demo seed maps a real provider to every appointment type, so this list is no
-        // longer expected to be empty — assert DTO shape instead (id/firstName/lastName/specialty
-        // only, no internal-only fields like email/isActive/deletedAt leaking out).
+        // Asserts DTO shape (id/firstName/lastName/specialty only, no internal-only fields like
+        // email/isActive/deletedAt leaking out) against this test's own dedicated fixture provider.
         assertThat(providersResponse.getBody()).isNotEmpty();
         Map<String, Object> firstProvider = (Map<String, Object>) providersResponse.getBody().get(0);
         assertThat(firstProvider).containsOnlyKeys("id", "firstName", "lastName", "specialty");
