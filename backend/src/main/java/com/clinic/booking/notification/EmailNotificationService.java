@@ -13,19 +13,39 @@ import org.springframework.stereotype.Service;
  * why this is only ever called *after* the booking transaction commits.
  * Logged on failure, not rethrown.
  */
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 @Service
 public class EmailNotificationService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailNotificationService.class);
     private static final String ADMIN_EMAIL = "AliSemanticWeb@gmail.com";
 
+    private final JavaMailSender mailSender;
+
+    public EmailNotificationService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
     @Async
     public void sendBookingNotification(Appointment appointment) {
         try {
             log.info("Sending {} notification email to {} (and BCC to {}) for appointment {}",
                     appointment.getStatus(), appointment.getPatientEmail(), ADMIN_EMAIL, appointment.getConfirmationToken());
-            // Actual email delivery (SMTP/provider integration) is out of scope for this
-            // milestone; this is the async, best-effort side-effect boundary §19 #41 requires.
+            
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(ADMIN_EMAIL); // You can change this to a generic no-reply if needed
+            message.setTo(appointment.getPatientEmail());
+            message.setBcc(ADMIN_EMAIL);
+            message.setSubject("Appointment " + appointment.getStatus() + " - Riverside Family Clinic");
+            message.setText("Hello " + appointment.getPatientFullName() + ",\n\n" +
+                    "Your appointment for " + appointment.getStartDatetime() + " is currently " + appointment.getStatus() + ".\n\n" +
+                    "Confirmation Token: " + appointment.getConfirmationToken() + "\n\n" +
+                    "Thank you,\nRiverside Family Clinic");
+            
+            mailSender.send(message);
+            log.info("Email sent successfully!");
         } catch (Exception e) {
             log.error("Failed to send {} notification email for appointment {}",
                     appointment.getStatus(), appointment.getConfirmationToken(), e);

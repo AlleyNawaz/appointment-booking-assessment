@@ -75,3 +75,15 @@ booking:
   cors:
     allowed-origins:
       - "http://localhost:4200"
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: AliSemanticWeb@gmail.com
+    password: YOUR_GMAIL_APP_PASSWORD_HERE
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
