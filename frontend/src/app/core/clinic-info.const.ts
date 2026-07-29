@@ -5,7 +5,7 @@
  * (`BookingProperties.clinicPhoneNumber`/`clinicTimezone`) so the two stay
  * consistent without changing a locked backend contract.
  */
-export const CLINIC_PHONE_NUMBER = '+1-555-0100';
+export const CLINIC_PHONE_NUMBER = '+923137607987';
 export const CLINIC_TIMEZONE = 'Asia/Kuala_Lumpur';
 
 /** Display-only branding used by the patient booking flow's header/sidebar (no backend contract). */
