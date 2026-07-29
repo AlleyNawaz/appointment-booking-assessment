@@ -43,7 +43,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code lock_until}) so it always exists for the {@code UPDATE} path to find.
  */
 @SpringBootTest
-@TestPropertySource(properties = "booking.hold-reaper.initial-delay-ms=3600000")
+@TestPropertySource(properties = {
+        "booking.hold-reaper.initial-delay-ms=3600000",
+        // All three @Scheduled jobs default to initial-delay-ms=0 (production wants them to
+        // start immediately on real app boot). Left at their defaults, this class's own
+        // Spring context would also auto-fire the OTHER two jobs' real triggers at context
+        // startup, racing this class's manual shedlock manipulation for a job it isn't even
+        // testing. Suppressing all three here — not just holdReaperJob — is this context's
+        // contribution to that race, mirrored identically in ApprovalTimeoutJobIT/MissedAppointmentJobIT.
+        "booking.approval-timeout-job.initial-delay-ms=3600000",
+        "booking.missed-appointment-job.initial-delay-ms=3600000"
+})
 class HoldReaperJobIT {
 
     private static final long GENERAL_CONSULT_TYPE_ID = 2L; // seeded by V2, §7.2

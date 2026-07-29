@@ -15,11 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +73,28 @@ class StaffAuthControllerIT {
         jdbcTemplate.update("DELETE FROM staff_users WHERE username = ?", username);
     }
 
+    private static final Calendar UTC_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+    /**
+     * A plain {@code Timestamp.from(instant)} passed through {@code JdbcTemplate}'s simple
+     * varargs {@code update(sql, args...)} is written using the JVM's default timezone's
+     * wall-clock fields, while {@code locked_until} is read back through Hibernate, which
+     * (per {@code hibernate.jdbc.time_zone: UTC}) reads using UTC wall-clock fields instead —
+     * the same discrepancy documented in {@code HoldReaperJobIT}. On this machine (UTC+5) an
+     * intended "60 seconds ago" would otherwise be misread as almost 5 hours in the future,
+     * making the account appear still locked. An explicit UTC {@link Calendar} pins the
+     * conversion so this raw update agrees with Hibernate's convention for the same column.
+     */
+    private void setLockedUntil(Instant lockedUntil) {
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "UPDATE staff_users SET failed_login_attempts = 5, locked_until = ? WHERE username = ?");
+            ps.setTimestamp(1, Timestamp.from(lockedUntil), UTC_CALENDAR);
+            ps.setString(2, username);
+            return ps;
+        });
+    }
+
     @Test
     void unknownUsername_andWrongPassword_returnIdenticalInvalidCredentials() {
         ResponseEntity<Map> unknown =
@@ -100,8 +125,7 @@ class StaffAuthControllerIT {
 
     @Test
     void lockout_selfExpiresAtReadTime_noScheduledJobInvolved() {
-        jdbcTemplate.update("UPDATE staff_users SET failed_login_attempts = 5, locked_until = ? WHERE username = ?",
-                Timestamp.from(Instant.now().minusSeconds(60)), username);
+        setLockedUntil(Instant.now().minusSeconds(60));
 
         ResponseEntity<Map> response = restTemplate.postForEntity(LOGIN_URL, loginBody(username, KNOWN_PASSWORD), Map.class);
 
@@ -112,8 +136,7 @@ class StaffAuthControllerIT {
     void wrongAttemptImmediatelyAfterLockoutExpiry_reLocks_insteadOfFreshCount() {
         // §19 #53: failed_login_attempts only resets on success, never merely because
         // locked_until elapsed — so a single wrong attempt right after expiry re-locks.
-        jdbcTemplate.update("UPDATE staff_users SET failed_login_attempts = 5, locked_until = ? WHERE username = ?",
-                Timestamp.from(Instant.now().minusSeconds(60)), username);
+        setLockedUntil(Instant.now().minusSeconds(60));
 
         ResponseEntity<Map> stillWrong =
                 restTemplate.postForEntity(LOGIN_URL, loginBody(username, "stillWrongPassword"), Map.class);

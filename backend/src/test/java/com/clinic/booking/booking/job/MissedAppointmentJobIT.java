@@ -29,7 +29,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * excluded from the sweep, and idempotent rerun safety.
  */
 @SpringBootTest
-@TestPropertySource(properties = "booking.missed-appointment-job.initial-delay-ms=3600000")
+@TestPropertySource(properties = {
+        "booking.missed-appointment-job.initial-delay-ms=3600000",
+        // See HoldReaperJobIT's identical block: all three @Scheduled jobs default to
+        // initial-delay-ms=0, so left at their defaults this context would also auto-fire
+        // the other two jobs' real triggers at startup, racing this class's own shedlock
+        // manipulation for a job it isn't testing.
+        "booking.hold-reaper.initial-delay-ms=3600000",
+        "booking.approval-timeout-job.initial-delay-ms=3600000"
+})
 class MissedAppointmentJobIT {
 
     private static final long GENERAL_CONSULT_TYPE_ID = 2L; // seeded by V2, §7.2

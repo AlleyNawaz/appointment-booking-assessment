@@ -1,5 +1,6 @@
 package com.clinic.booking.config;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Map;
@@ -39,6 +41,23 @@ class RateLimitingFilterIT {
 
     @Autowired
     private BookingProperties bookingProperties;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    /**
+     * This class exercises the gated booking endpoints directly and never manages the
+     * {@code enable_online_booking} flag itself — it was relying on ambient state (V13's
+     * default-on seed migration). {@link com.clinic.booking.booking.controller.BookingConfigControllerIT}
+     * runs alphabetically before this class and its own {@code @AfterEach} deliberately resets
+     * the flag to the seeded-off state, which was silently leaking into this class's runs.
+     * Every other IT class in the suite sets up the specific global state it needs rather than
+     * assuming what a previous class left behind; this test now does the same.
+     */
+    @BeforeEach
+    void ensureFlagIsOn() {
+        jdbcTemplate.update("UPDATE feature_flags SET is_enabled = TRUE WHERE flag_name = 'enable_online_booking'");
+    }
 
     @Test
     void availability_firstTenRequestsPerMinute_areAllowed_eleventhIsRateLimited() {
