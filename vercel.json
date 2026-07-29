@@ -1,5 +1,15 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist/frontend/browser",
-  "framework": "angular"
+  "framework": "angular",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://afternoon-taiga-15250-deeb1c3b536f.herokuapp.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

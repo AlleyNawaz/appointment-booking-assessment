@@ -12,6 +12,13 @@ trunk-based development plan (`ImplementationPlan.md`).
 
 ---
 
+## Live Deployment
+
+- **Frontend (Vercel)**: [https://appointment-booking-assessment-zeta.vercel.app](https://appointment-booking-assessment-zeta.vercel.app)
+- **Backend API (Heroku)**: [https://afternoon-taiga-15250-deeb1c3b536f.herokuapp.com](https://afternoon-taiga-15250-deeb1c3b536f.herokuapp.com)
+
+---
+
 ## Overview
 
 **Purpose.** Replace phone-based appointment scheduling with a self-service online flow for
