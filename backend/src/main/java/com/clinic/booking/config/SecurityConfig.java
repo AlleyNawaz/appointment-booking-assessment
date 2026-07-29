@@ -84,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/v1/booking/**").permitAll()
                         .requestMatchers("/api/v1/staff/auth/login").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
                         .requestMatchers("/actuator/**").hasRole("SYSADMIN")
                         .anyRequest().authenticated())
