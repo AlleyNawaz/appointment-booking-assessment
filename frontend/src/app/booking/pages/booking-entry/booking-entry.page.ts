@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { AsyncStateWrapperComponent } from '../../../shared/components/async-state-wrapper/async-state-wrapper.component';
 import { AppHeaderComponent } from '../../../shared/layout/app-header/app-header.component';
@@ -17,7 +18,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-booking-entry-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, AppHeaderComponent, RouterLink, TranslatePipe, MatIconModule],
+  imports: [AsyncStateWrapperComponent, AppHeaderComponent, RouterLink, TranslatePipe, MatIconModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './booking-entry.page.html',
   styleUrl: './booking-entry.page.scss',
