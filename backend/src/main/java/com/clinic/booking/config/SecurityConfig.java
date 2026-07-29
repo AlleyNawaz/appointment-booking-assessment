@@ -81,9 +81,11 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/v1/booking/**", "/api/v1/staff/auth/login"))
                 .securityContext(sc -> sc.securityContextRepository(securityContextRepository))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/api/v1/booking/**").permitAll()
                         .requestMatchers("/api/v1/staff/auth/login").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
+                        .requestMatchers("/actuator/**").hasRole("SYSADMIN")
                         .anyRequest().authenticated())
                 // §8.11: 401 is reserved exclusively for /staff/auth/login credential failures —
                 // no other endpoint in this API ever returns it. An unauthenticated request to a
