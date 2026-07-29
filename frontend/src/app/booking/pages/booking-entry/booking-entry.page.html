@@ -7,13 +7,18 @@
         @if (enabled()) {
           <p>{{ 'booking.entry.redirecting' | translate }}</p>
         } @else {
-          <div class="unavailable">
-            <h1>{{ 'booking.entry.unavailableTitle' | translate }}</h1>
-            <p>{{ 'booking.entry.unavailableBody' | translate:{ clinicPhoneNumber } }}</p>
+          <div class="unavailable-state">
+            <mat-icon class="unavailable-icon">event_busy</mat-icon>
+            <h1 class="unavailable-title">{{ 'booking.entry.unavailableTitle' | translate }}</h1>
+            <p class="unavailable-desc">{{ 'booking.entry.unavailableBody' | translate:{ clinicPhoneNumber } }}</p>
           </div>
         }
       }
-      <p><a routerLink="/appointments">{{ 'booking.entry.manageExisting' | translate }}</a></p>
+      <div class="manage-action">
+        <button mat-stroked-button color="primary" routerLink="/appointments">
+          {{ 'booking.entry.manageExisting' | translate }}
+        </button>
+      </div>
     </app-async-state-wrapper>
   </div>
 </div>
