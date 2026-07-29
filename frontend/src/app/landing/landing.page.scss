@@ -144,6 +144,18 @@
 .hero-illustration {
   position: relative;
   width: 100%;
+  display: block;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-8px);
+    
+    .mock-card {
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.1);
+      border-color: #cbd5e1;
+    }
+  }
 }
 
 .mock-card {
