@@ -1,0 +1,86 @@
+<app-header />
+
+<main class="landing-page">
+  <div class="landing-hero">
+    
+    <!-- Left: Copy & CTA -->
+    <div class="hero-content">
+      <div class="launch-badge">
+        <span>{{ 'landing.launchBadge' | translate }}</span>
+      </div>
+      
+      <h1 class="hero-title">{{ 'landing.heroTitle' | translate }}</h1>
+      
+      <p class="hero-description">
+        {{ 'landing.heroDescription' | translate }}
+      </p>
+
+      <div class="hero-actions">
+        <button mat-flat-button color="primary" class="main-cta" routerLink="/book">
+          {{ 'landing.bookAppointment' | translate }}
+        </button>
+        <button mat-stroked-button class="secondary-cta" routerLink="/appointments">
+          {{ 'landing.manageBooking' | translate }}
+        </button>
+      </div>
+
+      <p class="hero-footer-text">{{ 'landing.noAccountRequired' | translate }}</p>
+
+      <div class="trust-section">
+        <div class="trust-stars">
+          <mat-icon class="star">star</mat-icon>
+          <mat-icon class="star">star</mat-icon>
+          <mat-icon class="star">star</mat-icon>
+          <mat-icon class="star">star</mat-icon>
+          <mat-icon class="star">star_half</mat-icon>
+        </div>
+        <span class="trust-label"><mat-icon class="trust-icon">verified_user</mat-icon> {{ 'landing.trustpilot' | translate }}</span>
+        
+        <div class="trust-avatars">
+          <div class="avatar p-avatar">P</div>
+          <div class="avatar g-avatar">G</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Mock UI Illustration -->
+    <div class="hero-illustration">
+      <div class="mock-card">
+        <div class="mock-sidebar">
+          <div class="mock-avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+          <p class="mock-name">{{ 'landing.mockDoctorName' | translate }}</p>
+          <h2 class="mock-event-title">{{ 'landing.mockEventTitle' | translate }}</h2>
+          <p class="mock-event-desc">
+            {{ 'landing.mockEventDesc' | translate }}
+          </p>
+          <div class="mock-pills">
+            <span class="mock-pill active">30m</span>
+          </div>
+          <div class="mock-detail">
+            <mat-icon>videocam</mat-icon> {{ 'landing.mockZoom' | translate }}
+          </div>
+          <div class="mock-detail">
+            <mat-icon>language</mat-icon> {{ 'landing.mockTimezone' | translate }}
+          </div>
+        </div>
+        
+        <div class="mock-calendar">
+          <div class="mock-month">{{ 'landing.mockMonth' | translate }}</div>
+          <div class="mock-weekdays">
+            <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+          </div>
+          <div class="mock-days">
+            <!-- Add a few empty days for offset -->
+            <span></span><span></span><span></span>
+            @for (day of mockDays; track day) {
+              <span class="mock-day" [class.active]="day === 14" [class.past]="day < 14">{{ day }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>

@@ -1,59 +1,99 @@
-<div class="reschedule-section">
-  @if (!expanded()) {
-    <button type="button" (click)="start()">{{ 'appointmentLookup.reschedule.startButton' | translate }}</button>
-  } @else {
-    <h2>{{ 'appointmentLookup.reschedule.title' | translate }}</h2>
+@if (!expanded()) {
+  <button mat-flat-button color="primary" class="reschedule-start-btn" (click)="start()">
+    <mat-icon>event_repeat</mat-icon>
+    {{ 'appointmentLookup.rescheduleButton' | translate }}
+  </button>
+} @else {
+  <div class="reschedule-panel">
+    <div class="reschedule-panel__header">
+      <h3 class="reschedule-panel__title">{{ 'appointmentLookup.rescheduleButton' | translate }}</h3>
+      <button mat-icon-button (click)="cancel()" class="close-btn" aria-label="Cancel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="reschedule-panel__content">
+      <div class="date-picker-section">
+        <label for="rescheduleDate" class="section-label">{{ 'appointmentLookup.newDate' | translate }}</label>
+        <div class="date-input-wrapper">
+          <mat-icon class="date-icon">calendar_today</mat-icon>
+          <input 
+            type="date" 
+            id="rescheduleDate" 
+            class="styled-date-input"
+            [min]="minDate" 
+            [max]="maxDate" 
+            [value]="selectedDate()"
+            (change)="onDateChange($any($event.target).value)" 
+          />
+        </div>
+      </div>
 
-    <label for="rescheduleDate">{{ 'appointmentLookup.reschedule.newDateLabel' | translate }}</label>
-    <input
-      id="rescheduleDate"
-      type="date"
-      [min]="minDate"
-      [max]="maxDate"
-      [value]="selectedDate()"
-      (change)="onDateChange($any($event.target).value)"
-    />
-
-    @if (slotsLoading()) {
-      <p>{{ 'common.loading' | translate }}</p>
-    } @else if (slotsError()) {
-      <p role="alert" aria-live="polite">{{ slotsError() }}</p>
-    } @else if (selectedDate() && slots().length === 0) {
-      <p>{{ 'appointmentLookup.reschedule.noAvailableTimes' | translate }}</p>
-    } @else if (slots().length > 0) {
-      <ul class="slot-list">
-        @for (slot of slots(); track slot) {
-          <li>
-            <button
-              type="button"
-              [disabled]="holdSubmitting()"
-              [class.selected]="selectedSlot() === slot"
-              (click)="selectSlot(slot)"
-            >
-              {{ formatSlotTime(slot) }}
-            </button>
-          </li>
-        }
-      </ul>
-    }
-
-    @if (holdError()) {
-      <p role="alert" aria-live="polite">{{ holdError() }}</p>
-    }
-
-    @if (holdToken()) {
-      <label for="rescheduleReason">{{ 'appointmentLookup.reschedule.reasonLabel' | translate }}</label>
-      <textarea id="rescheduleReason" [value]="reason()" (input)="reason.set($any($event.target).value)"></textarea>
-
-      @if (rescheduleError()) {
-        <p role="alert" aria-live="polite">{{ rescheduleError() }}</p>
+      @if (slotsLoading()) {
+        <div class="loading-state">
+          <mat-icon class="spinner">sync</mat-icon>
+          <p>{{ 'appointmentLookup.loadingSlots' | translate }}</p>
+        </div>
+      } @else if (slotsError()) {
+        <p class="error-message" role="alert" aria-live="polite">
+          <mat-icon>error_outline</mat-icon>
+          {{ slotsError() }}
+        </p>
+      } @else if (selectedDate()) {
+        <div class="slots-section">
+          @if (slots().length === 0) {
+            <p class="no-slots-message">{{ 'appointmentLookup.noSlots' | translate }}</p>
+          } @else {
+            <div class="slots-grid">
+              @for (slot of slots(); track slot) {
+                <button 
+                  type="button" 
+                  class="slot-btn"
+                  [class.slot-btn--selected]="selectedSlot() === slot"
+                  [disabled]="holdSubmitting() && selectedSlot() !== slot"
+                  (click)="selectSlot(slot)">
+                  {{ formatSlotTime(slot) }}
+                </button>
+              }
+            </div>
+            
+            @if (holdError()) {
+              <p class="error-message" role="alert" aria-live="polite">
+                <mat-icon>error_outline</mat-icon>
+                {{ holdError() }}
+              </p>
+            }
+          }
+        </div>
       }
 
-      <button type="button" [disabled]="rescheduling()" (click)="submit()">
-        {{ (rescheduling() ? 'appointmentLookup.reschedule.rescheduling' : 'appointmentLookup.reschedule.confirmButton') | translate }}
-      </button>
-    }
+      @if (holdToken()) {
+        <div class="confirm-section">
+          <mat-divider class="section-divider"></mat-divider>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'appointmentLookup.rescheduleReasonLabel' | translate }}</mat-label>
+            <textarea matInput rows="3" [value]="reason()" (input)="reason.set($any($event.target).value)" placeholder="Optional reason..."></textarea>
+          </mat-form-field>
 
-    <button type="button" (click)="cancel()">{{ 'appointmentLookup.reschedule.cancelButton' | translate }}</button>
-  }
-</div>
+          @if (rescheduleError()) {
+            <p class="error-message" role="alert" aria-live="polite">
+              <mat-icon>error_outline</mat-icon>
+              {{ rescheduleError() }}
+            </p>
+          }
+
+          <div class="action-buttons">
+            <button mat-stroked-button type="button" (click)="cancel()">
+              {{ 'appointmentLookup.cancelButton' | translate }}
+            </button>
+            <button mat-flat-button color="primary" type="button" [disabled]="rescheduling()" (click)="submit()">
+              <mat-icon>check_circle</mat-icon>
+              {{ (rescheduling() ? 'appointmentLookup.rescheduling' : 'appointmentLookup.confirmRescheduleButton') | translate }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

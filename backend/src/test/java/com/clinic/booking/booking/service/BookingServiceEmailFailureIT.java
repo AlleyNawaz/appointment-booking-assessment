@@ -141,6 +141,10 @@ class BookingServiceEmailFailureIT {
     }
 
     static class FailingEmailNotificationService extends EmailNotificationService {
+        public FailingEmailNotificationService() {
+            super(null, null, null);
+        }
+
         @Override
         @Async
         public void sendBookingNotification(Appointment appointment) {

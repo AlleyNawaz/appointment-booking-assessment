@@ -1,0 +1,191 @@
+.reschedule-start-btn {
+  padding: 0 2rem !important;
+  height: 44px;
+  font-weight: 600 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.reschedule-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-top: 1rem;
+  
+  &__header {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  &__title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  
+  &__content {
+    padding: 1.5rem;
+  }
+}
+
+.close-btn {
+  color: var(--color-text-secondary);
+}
+
+.section-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.date-picker-section {
+  margin-bottom: 1.5rem;
+}
+
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-primary);
+  pointer-events: none;
+}
+
+.styled-date-input {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: #fdfdfd;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+}
+
+.slots-section {
+  margin-bottom: 1.5rem;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.slot-btn {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    background: #f0f7ff;
+    color: var(--color-primary);
+  }
+  
+  &--selected {
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  color: var(--color-text-secondary);
+  gap: 12px;
+  
+  .spinner {
+    animation: spin 1.5s linear infinite;
+    color: var(--color-primary);
+  }
+}
+
+.no-slots-message {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.confirm-section {
+  .section-divider {
+    margin: 1.5rem 0 !important;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 1rem;
+  
+  button {
+    min-width: 120px;
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f44336;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: #ffebee;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}

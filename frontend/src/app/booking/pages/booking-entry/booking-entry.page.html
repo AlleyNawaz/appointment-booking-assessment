@@ -1,0 +1,19 @@
+<app-header />
+
+<div class="booking-page">
+  <div class="booking-entry card">
+    <app-async-state-wrapper [loading]="loading()" [error]="error()">
+      @if (!loading() && !error()) {
+        @if (enabled()) {
+          <p>{{ 'booking.entry.redirecting' | translate }}</p>
+        } @else {
+          <div class="unavailable">
+            <h1>{{ 'booking.entry.unavailableTitle' | translate }}</h1>
+            <p>{{ 'booking.entry.unavailableBody' | translate:{ clinicPhoneNumber } }}</p>
+          </div>
+        }
+      }
+      <p><a routerLink="/appointments">{{ 'booking.entry.manageExisting' | translate }}</a></p>
+    </app-async-state-wrapper>
+  </div>
+</div>

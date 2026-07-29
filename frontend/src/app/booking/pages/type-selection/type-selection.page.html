@@ -1,0 +1,55 @@
+<app-header />
+
+<div class="booking-page">
+  <app-booking-stepper [currentStep]="1" />
+
+  <div class="booking-page__layout booking-page__layout--with-sidebar">
+    <main class="booking-page__main">
+      <h1>{{ 'booking.typeSelection.title' | translate }}</h1>
+      <p class="booking-page__subtitle">{{ 'booking.typeSelection.subtitle' | translate }}</p>
+
+      <app-async-state-wrapper
+        [loading]="loading()"
+        [error]="error()"
+        [empty]="!loading() && !error() && types().length === 0"
+        [emptyMessage]="'booking.typeSelection.empty' | translate"
+      >
+        <div class="type-cards">
+          @for (type of types(); track type.id) {
+            <button
+              type="button"
+              class="type-card"
+              [class.type-card--selected]="selectedTypeId() === type.id"
+              [attr.aria-pressed]="selectedTypeId() === type.id"
+              (click)="select(type)"
+            >
+              <span class="type-card__icon">
+                <mat-icon>{{ displayFor(type).icon }}</mat-icon>
+              </span>
+              <span class="type-card__body">
+                <span class="type-card__title">{{ type.displayName }}</span>
+                <span class="type-card__description">{{ displayFor(type).descriptionKey | translate }}</span>
+                <span class="type-card__meta">
+                  <span class="type-card__duration">
+                    {{ 'booking.typeSelection.durationMinutes' | translate:{ durationMinutes: '' + type.durationMinutes } }}
+                  </span>
+                  <mat-chip class="type-card__badge" [class.type-card__badge--approval]="type.requiresApproval" disabled>
+                    <span class="type-card__badge-dot" aria-hidden="true"></span>
+                    {{ (type.requiresApproval ? 'booking.typeSelection.requiresApprovalBadge' : 'booking.typeSelection.availableBadge') | translate }}
+                  </mat-chip>
+                </span>
+              </span>
+              <mat-icon class="type-card__chevron" aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          }
+        </div>
+      </app-async-state-wrapper>
+
+      <app-booking-info-banner />
+    </main>
+
+    <aside class="booking-page__aside">
+      <app-booking-sidebar />
+    </aside>
+  </div>
+</div>

@@ -1,48 +1,62 @@
-@if (result(); as appointment) {
-  @if (appointment.status === 'CONFIRMED') {
-    <div>
-      <h1>{{ 'booking.reviewConfirm.confirmedTitle' | translate }}</h1>
-      <p>{{ 'booking.reviewConfirm.confirmedBody' | translate }}</p>
-      <p>{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
+<app-header />
+
+<div class="booking-page">
+  <app-booking-stepper [currentStep]="5" />
+
+  @if (result(); as appointment) {
+    <div class="confirmation-result card">
+      @if (appointment.status === 'CONFIRMED') {
+        <mat-icon class="confirmation-result__icon confirmation-result__icon--success" aria-hidden="true">check_circle</mat-icon>
+        <h1>{{ 'booking.reviewConfirm.confirmedTitle' | translate }}</h1>
+        <p>{{ 'booking.reviewConfirm.confirmedBody' | translate }}</p>
+        <p class="confirmation-result__token">{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
+      } @else {
+        <mat-icon class="confirmation-result__icon confirmation-result__icon--pending" aria-hidden="true">hourglass_top</mat-icon>
+        <h1>{{ 'booking.reviewConfirm.pendingTitle' | translate }}</h1>
+        <p>
+          {{ 'booking.reviewConfirm.pendingBody' | translate }}
+        </p>
+        <p class="confirmation-result__token">{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
+      }
     </div>
   } @else {
-    <div>
-      <h1>{{ 'booking.reviewConfirm.pendingTitle' | translate }}</h1>
-      <p>
-        {{ 'booking.reviewConfirm.pendingBody' | translate }}
-      </p>
-      <p>{{ 'booking.reviewConfirm.confirmationNumber' | translate }} <strong>{{ appointment.confirmationToken }}</strong></p>
+    <div class="booking-page__layout booking-page__layout--with-sidebar">
+      <main class="booking-page__main">
+        <h1>{{ 'booking.reviewConfirm.title' | translate }}</h1>
+
+        <dl class="review-summary card">
+          <dt>{{ 'booking.reviewConfirm.appointmentType' | translate }}</dt>
+          <dd>{{ appointmentTypeName() }}</dd>
+          <dt>{{ 'booking.reviewConfirm.provider' | translate }}</dt>
+          <dd>{{ providerName() }}</dd>
+          <dt>{{ 'booking.reviewConfirm.dateTime' | translate }}</dt>
+          <dd>{{ slotDisplay() }}</dd>
+          @if (contact(); as contactInfo) {
+            <dt>{{ 'booking.reviewConfirm.name' | translate }}</dt>
+            <dd>{{ contactInfo.fullName }}</dd>
+            <dt>{{ 'booking.reviewConfirm.email' | translate }}</dt>
+            <dd>{{ contactInfo.email }}</dd>
+            <dt>{{ 'booking.reviewConfirm.phone' | translate }}</dt>
+            <dd>{{ contactInfo.phone }}</dd>
+            @if (contactInfo.notes) {
+              <dt>{{ 'booking.reviewConfirm.notes' | translate }}</dt>
+              <dd>{{ contactInfo.notes }}</dd>
+            }
+          }
+        </dl>
+
+        @if (submitError()) {
+          <p role="alert" aria-live="polite" class="hold-error">{{ submitError() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="button" class="review-summary__submit" [disabled]="submitting()" (click)="submit()">
+          {{ (submitting() ? 'booking.reviewConfirm.submitting' : 'booking.reviewConfirm.confirmBooking') | translate }}
+        </button>
+      </main>
+
+      <aside class="booking-page__aside">
+        <app-booking-sidebar />
+      </aside>
     </div>
   }
-} @else {
-  <h1>{{ 'booking.reviewConfirm.title' | translate }}</h1>
-
-  <dl>
-    <dt>{{ 'booking.reviewConfirm.appointmentType' | translate }}</dt>
-    <dd>{{ appointmentTypeName() }}</dd>
-    <dt>{{ 'booking.reviewConfirm.provider' | translate }}</dt>
-    <dd>{{ providerName() }}</dd>
-    <dt>{{ 'booking.reviewConfirm.dateTime' | translate }}</dt>
-    <dd>{{ slotDisplay() }}</dd>
-    @if (contact(); as contactInfo) {
-      <dt>{{ 'booking.reviewConfirm.name' | translate }}</dt>
-      <dd>{{ contactInfo.fullName }}</dd>
-      <dt>{{ 'booking.reviewConfirm.email' | translate }}</dt>
-      <dd>{{ contactInfo.email }}</dd>
-      <dt>{{ 'booking.reviewConfirm.phone' | translate }}</dt>
-      <dd>{{ contactInfo.phone }}</dd>
-      @if (contactInfo.notes) {
-        <dt>{{ 'booking.reviewConfirm.notes' | translate }}</dt>
-        <dd>{{ contactInfo.notes }}</dd>
-      }
-    }
-  </dl>
-
-  @if (submitError()) {
-    <p role="alert" aria-live="polite" class="hold-error">{{ submitError() }}</p>
-  }
-
-  <button type="button" [disabled]="submitting()" (click)="submit()">
-    {{ (submitting() ? 'booking.reviewConfirm.submitting' : 'booking.reviewConfirm.confirmBooking') | translate }}
-  </button>
-}
+</div>

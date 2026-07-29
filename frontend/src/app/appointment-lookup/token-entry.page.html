@@ -1,0 +1,29 @@
+<app-header />
+<main class="token-entry-main">
+  <div class="token-entry-card">
+    <div class="token-entry-header">
+      <mat-icon class="token-entry-icon">search</mat-icon>
+      <h1 class="token-entry-title">Manage Your Appointment</h1>
+      <p class="token-entry-subtitle">Enter the appointment token provided in your confirmation email to view or reschedule your appointment.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="token-entry-form">
+      <mat-form-field appearance="outline" class="token-entry-field">
+        <mat-label>Appointment Token</mat-label>
+        <input matInput formControlName="token" placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000" />
+        <mat-icon matPrefix>key</mat-icon>
+        @if (form.controls.token.hasError('pattern')) {
+          <mat-error>Please enter a valid UUID token.</mat-error>
+        }
+        @if (form.controls.token.hasError('required')) {
+          <mat-error>Token is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="token-entry-submit">
+        Lookup Appointment
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </form>
+  </div>
+</main>

@@ -12,6 +12,36 @@
     "no": "No",
     "optional": "optional"
   },
+  "shared": {
+    "header": {
+      "navBook": "Book Appointment",
+      "navManage": "Manage Appointment",
+      "navFaqs": "FAQs",
+      "languageLabel": "Language"
+    },
+    "stepper": {
+      "stepType": "Appointment Type",
+      "stepProvider": "Provider",
+      "stepSchedule": "Date & Time",
+      "stepDetails": "Details",
+      "stepConfirmation": "Confirmation",
+      "ariaLabel": "Booking progress"
+    },
+    "sidebar": {
+      "whatsNextTitle": "What happens next?",
+      "whatsNextChooseProvider": "Choose provider",
+      "whatsNextPickDate": "Pick date",
+      "whatsNextEnterDetails": "Enter your details",
+      "whatsNextReceiveConfirmation": "Receive confirmation",
+      "needHelpTitle": "Need help?",
+      "clinicPhoneLabel": "Clinic phone",
+      "workingHoursLabel": "Working hours"
+    },
+    "infoBanner": {
+      "title": "Not sure which appointment type?",
+      "body": "Choose General Consultation for routine check-ups and ongoing concerns. If it's your first visit, select New Patient Intake so we can prepare your file. Still unsure? Call the clinic and our team will help you pick the right visit."
+    }
+  },
   "booking": {
     "entry": {
       "redirecting": "Redirecting to appointment booking…",
@@ -21,11 +51,20 @@
     },
     "typeSelection": {
       "title": "Select Appointment Type",
+      "subtitle": "Choose the type of visit you'd like to schedule.",
       "empty": "No appointment types are currently available.",
-      "durationMinutes": "{durationMinutes} min"
+      "durationMinutes": "{durationMinutes} min",
+      "availableBadge": "Available",
+      "requiresApprovalBadge": "Requires approval",
+      "descriptionGeneral": "Routine health consultation",
+      "descriptionNewPatient": "First-visit intake and records setup",
+      "descriptionFollowUp": "Quick check-in on an ongoing concern",
+      "descriptionSpecialist": "In-depth consultation with a specialist",
+      "descriptionDefault": "Schedule this type of visit"
     },
     "providerSelection": {
       "title": "Select a Provider",
+      "subtitle": "Choose who you'd like to see for this visit.",
       "empty": "No providers currently offer this appointment type.",
       "providerNamePrefix": "Dr."
     },
@@ -269,5 +308,34 @@
     "APPOINTMENT_STATE_CHANGED": "This appointment was modified by clinic staff and can no longer be rescheduled. Refresh and try again.",
     "RATE_LIMITED": "Too many requests. Please wait a moment and try again.",
     "DEFAULT": "Something went wrong. Please try again."
+  },
+  "landing": {
+    "launchBadge": "Riverside Family Clinic v2.0 >",
+    "heroTitle": "The better way to schedule your appointments",
+    "heroDescription": "A fully customizable scheduling system for patients and staff. Book your clinic visits seamlessly, without the hassle of phone calls or wait times.",
+    "bookAppointment": "Book Appointment",
+    "manageBooking": "Manage an existing booking >",
+    "noAccountRequired": "No account required",
+    "trustpilot": "Trustpilot",
+    "mockDoctorName": "Dr. Sarah Jenkins",
+    "mockEventTitle": "General Checkup",
+    "mockEventDesc": "Discuss your health matters with our experienced doctors in a private consultation.",
+    "mockZoom": "Zoom",
+    "mockTimezone": "Asia/Kuala_Lumpur",
+    "mockMonth": "August 2026"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about booking with us.",
+    "q1": "How do I book an appointment?",
+    "a1": "You can book an appointment by navigating to the \"Book\" page from the main menu, selecting your preferred appointment type and provider, and choosing an available time slot.",
+    "q2": "Can I cancel or reschedule my appointment?",
+    "a2": "Yes! Check your confirmation email for a link to manage your appointment. Alternatively, you can click \"Manage\" in the navigation bar and enter your appointment token to cancel or reschedule it online.",
+    "q3": "What is a confirmation token?",
+    "a3": "A confirmation token is a unique 36-character code (UUID) provided to you when you successfully book an appointment. It acts as your secure \"password\" to access and modify your specific appointment later.",
+    "q4": "Is there a limit on how many appointments I can book?",
+    "a4": "Yes, to prevent spam and ensure fairness, our system currently limits patients to a maximum of 3 appointments per day.",
+    "q5": "Do I need to create an account?",
+    "a5": "No! Our system is designed for frictionless booking. You just need to provide your name, email, and phone number during checkout."
   }
 }

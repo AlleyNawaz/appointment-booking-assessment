@@ -1,37 +1,89 @@
-<h1>{{ 'appointmentLookup.title' | translate }}</h1>
+<app-header />
 
-<app-async-state-wrapper [loading]="loading()" [error]="error()">
-  @if (appointment(); as appointment) {
-    <dl>
-      <dt>{{ 'appointmentLookup.provider' | translate }}</dt>
-      <dd>{{ appointment.providerName }}</dd>
-      <dt>{{ 'appointmentLookup.type' | translate }}</dt>
-      <dd>{{ appointment.appointmentTypeName }}</dd>
-      <dt>{{ 'appointmentLookup.date' | translate }}</dt>
-      <dd>{{ formatDate(appointment.startDateTime) }}</dd>
-      <dt>{{ 'appointmentLookup.time' | translate }}</dt>
-      <dd>{{ formatTime(appointment.startDateTime) }}</dd>
-      <dt>{{ 'appointmentLookup.status' | translate }}</dt>
-      <dd>{{ appointment.status }}</dd>
-    </dl>
+<main class="booking-page">
+  <div class="appointment-lookup-container">
+    <app-async-state-wrapper [loading]="loading()" [error]="error()">
+      @if (appointment(); as appointment) {
+        
+        <div class="card detail-card">
+          <div class="detail-card__header">
+            <h1 class="detail-card__title">{{ 'appointmentLookup.title' | translate }}</h1>
+            <span class="status-badge" [class]="'status-badge--' + appointment.status.toLowerCase()">
+              {{ appointment.status }}
+            </span>
+          </div>
 
-    @if (appointment.cancellationEligible) {
-      <div class="cancel-section">
-        <label for="cancelReason">{{ 'appointmentLookup.cancelReasonLabel' | translate }}</label>
-        <textarea id="cancelReason" [value]="cancelReason()" (input)="cancelReason.set($any($event.target).value)"></textarea>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <mat-icon class="detail-icon">person</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">{{ 'appointmentLookup.provider' | translate }}</span>
+                <span class="detail-value">{{ appointment.providerName }}</span>
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <mat-icon class="detail-icon">category</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">{{ 'appointmentLookup.type' | translate }}</span>
+                <span class="detail-value">{{ appointment.appointmentTypeName }}</span>
+              </div>
+            </div>
 
-        @if (cancelError()) {
-          <p role="alert" aria-live="polite">{{ cancelError() }}</p>
-        }
+            <div class="detail-item">
+              <mat-icon class="detail-icon">event</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">{{ 'appointmentLookup.date' | translate }}</span>
+                <span class="detail-value">{{ formatDate(appointment.startDateTime) }}</span>
+              </div>
+            </div>
 
-        <button type="button" [disabled]="cancelling()" (click)="cancel()">
-          {{ (cancelling() ? 'appointmentLookup.cancelling' : 'appointmentLookup.cancelButton') | translate }}
-        </button>
-      </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">schedule</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">{{ 'appointmentLookup.time' | translate }}</span>
+                <span class="detail-value">{{ formatTime(appointment.startDateTime) }}</span>
+              </div>
+            </div>
+          </div>
 
-      <app-reschedule-action [appointment]="appointment" [confirmationToken]="appointment.confirmationToken" />
-    } @else if (appointment.status === 'CANCELLED') {
-      <p>{{ 'appointmentLookup.cancelledMessage' | translate }}</p>
-    }
-  }
-</app-async-state-wrapper>
+          <mat-divider class="detail-divider"></mat-divider>
+
+          @if (appointment.cancellationEligible) {
+            <div class="action-section">
+              <h3 class="action-title">Manage Appointment</h3>
+              
+              <div class="cancel-section">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ 'appointmentLookup.cancelReasonLabel' | translate }}</mat-label>
+                  <textarea matInput rows="3" [value]="cancelReason()" (input)="cancelReason.set($any($event.target).value)" placeholder="Optional reason..."></textarea>
+                </mat-form-field>
+
+                @if (cancelError()) {
+                  <p class="error-message" role="alert" aria-live="polite">
+                    <mat-icon>error_outline</mat-icon>
+                    {{ cancelError() }}
+                  </p>
+                }
+
+                <button mat-flat-button color="warn" [disabled]="cancelling()" (click)="cancel()" class="cancel-btn">
+                  <mat-icon>cancel</mat-icon>
+                  {{ (cancelling() ? 'appointmentLookup.cancelling' : 'appointmentLookup.cancelButton') | translate }}
+                </button>
+              </div>
+
+              <div class="reschedule-wrapper">
+                <app-reschedule-action [appointment]="appointment" [confirmationToken]="appointment.confirmationToken" />
+              </div>
+            </div>
+          } @else if (appointment.status === 'CANCELLED') {
+            <div class="cancelled-notice">
+              <mat-icon>info</mat-icon>
+              <p>{{ 'appointmentLookup.cancelledMessage' | translate }}</p>
+            </div>
+          }
+        </div>
+      }
+    </app-async-state-wrapper>
+  </div>
+</main>

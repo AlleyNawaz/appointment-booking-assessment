@@ -25,6 +25,7 @@ import com.clinic.booking.common.exception.SlotAlreadyBookedException;
 import com.clinic.booking.common.exception.SlotHoldExpiredException;
 import com.clinic.booking.common.util.RequestHasher;
 import com.clinic.booking.config.BookingProperties;
+import com.clinic.booking.notification.EmailNotificationService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -63,6 +64,7 @@ public class RescheduleService {
     private final DuplicateAppointmentValidator duplicateAppointmentValidator;
     private final AuditLogWriter auditLogWriter;
     private final BookingProperties bookingProperties;
+    private final EmailNotificationService emailNotificationService;
 
     public RescheduleService(
             AppointmentRepository appointmentRepository,
@@ -74,7 +76,8 @@ public class RescheduleService {
             ClinicClosedDayValidator clinicClosedDayValidator,
             DuplicateAppointmentValidator duplicateAppointmentValidator,
             AuditLogWriter auditLogWriter,
-            BookingProperties bookingProperties) {
+            BookingProperties bookingProperties,
+            EmailNotificationService emailNotificationService) {
         this.appointmentRepository = appointmentRepository;
         this.slotHoldRepository = slotHoldRepository;
         this.providerRepository = providerRepository;
@@ -85,6 +88,7 @@ public class RescheduleService {
         this.duplicateAppointmentValidator = duplicateAppointmentValidator;
         this.auditLogWriter = auditLogWriter;
         this.bookingProperties = bookingProperties;
+        this.emailNotificationService = emailNotificationService;
     }
 
     @Transactional
@@ -176,6 +180,8 @@ public class RescheduleService {
         auditLogWriter.write(original.getId(), previousStatus, Appointment.Status.CANCELLED,
                 "PATIENT_SELF_SERVICE", original.getCancellationReason());
         auditLogWriter.write(newAppointment.getId(), null, newStatus, "PATIENT_SELF_SERVICE", null);
+
+        emailNotificationService.sendRescheduleNotification(newAppointment, confirmationToken);
 
         // Step 10: commit (implicit on successful method return).
         return toResponse(newAppointment, confirmationToken);

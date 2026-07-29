@@ -7,6 +7,12 @@ import { AppointmentDetailResponse } from '../booking/models/appointment.model';
 import { BookingApiService } from '../booking/services/booking-api.service';
 import { CLINIC_TIMEZONE } from '../core/clinic-info.const';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDividerModule } from '@angular/material/divider';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 const MAX_BOOKING_WINDOW_DAYS = 90;
 
@@ -30,9 +36,19 @@ function addDays(isoDate: string, days: number): string {
 @Component({
   selector: 'app-reschedule-action',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [
+    TranslatePipe,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDividerModule,
+    ReactiveFormsModule,
+    FormsModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reschedule-action.component.html',
+  styleUrl: './reschedule-action.component.scss'
 })
 export class RescheduleActionComponent {
   private readonly bookingApi = inject(BookingApiService);

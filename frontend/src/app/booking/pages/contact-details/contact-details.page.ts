@@ -2,8 +2,12 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 import { BookingStateService } from '../../state/booking-state.service';
+import { AppHeaderComponent } from '../../../shared/layout/app-header/app-header.component';
+import { BookingStepperComponent } from '../../../shared/layout/booking-stepper/booking-stepper.component';
+import { BookingSidebarComponent } from '../../../shared/layout/booking-sidebar/booking-sidebar.component';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /**
@@ -14,9 +18,17 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-contact-details-page',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    AppHeaderComponent,
+    BookingStepperComponent,
+    BookingSidebarComponent,
+    MatButtonModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './contact-details.page.html',
+  styleUrl: './contact-details.page.scss',
 })
 export class ContactDetailsPage implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);

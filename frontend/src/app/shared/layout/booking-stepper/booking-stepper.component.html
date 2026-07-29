@@ -1,0 +1,22 @@
+<ol class="booking-stepper" [attr.aria-label]="'shared.stepper.ariaLabel' | translate">
+  @for (item of steps(); track item.step; let last = $last) {
+    <li
+      class="booking-stepper__item"
+      [class.booking-stepper__item--done]="item.status === 'done'"
+      [class.booking-stepper__item--current]="item.status === 'current'"
+      [attr.aria-current]="item.status === 'current' ? 'step' : null"
+    >
+      <span class="booking-stepper__marker">
+        @if (item.status === 'done') {
+          <mat-icon aria-hidden="true">check</mat-icon>
+        } @else {
+          {{ item.step }}
+        }
+      </span>
+      <span class="booking-stepper__label">{{ item.labelKey | translate }}</span>
+    </li>
+    @if (!last) {
+      <li class="booking-stepper__connector" aria-hidden="true"></li>
+    }
+  }
+</ol>

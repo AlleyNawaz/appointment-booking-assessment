@@ -1,139 +1,120 @@
 .app-header {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  height: 72px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
-  z-index: 10;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__clinic-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #0f172a;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  &__nav-link {
+    text-decoration: none;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #0f172a;
+    }
+
+    &--active {
+      color: #0f172a;
+      font-weight: 600;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 
-.app-header__inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px var(--space-3);
-  display: flex;
+.language-btn {
+  display: flex !important;
   align-items: center;
-  justify-content: space-between;
-}
-
-.app-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.app-header__logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-  color: #fff;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-  transition: transform var(--transition-fast);
-}
-
-.app-header__brand:hover .app-header__logo {
-  transform: scale(1.05);
-}
-
-.app-header__clinic-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--color-text);
-}
-
-.app-header__nav-container {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.app-header__nav {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.app-header__nav-link {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all var(--transition-fast);
-}
-
-.app-header__nav-link:hover {
-  color: var(--color-primary);
-  background: rgba(255, 255, 255, 0.8);
-}
-
-.app-header__nav-link--active {
-  color: var(--color-primary);
-  background: rgba(99, 102, 241, 0.1);
-}
-
-.app-header__nav-link--static {
-  cursor: default;
-}
-
-.app-header__nav-link--static:hover {
-  background: transparent;
-  color: var(--color-text-secondary);
-}
-
-.app-header__language {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-
+  gap: 4px;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  
   mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .dropdown-icon {
     font-size: 20px;
     width: 20px;
     height: 20px;
+    margin-left: -4px;
   }
 }
 
-.app-header__language:hover {
-  background: rgba(255, 255, 255, 0.8);
-  color: var(--color-primary);
+.book-now-btn {
+  border-radius: 8px !important;
+  background-color: #0f172a !important;
+  font-weight: 600 !important;
+  padding: 0 20px !important;
 }
 
 @media (max-width: 768px) {
-  .app-header__inner {
-    padding: 12px var(--space-2);
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .app-header__nav-container {
-    width: 100%;
-    justify-content: space-between;
-    gap: var(--space-2);
-    order: 3;
-  }
-
   .app-header__nav {
-    gap: var(--space-1);
+    display: none; // Would need a hamburger menu for mobile, keeping simple for now
   }
-
-  .app-header__clinic-name {
-    font-size: 1.1rem;
+  
+  .app-header__inner {
+    padding: 0 1rem;
   }
 }

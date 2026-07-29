@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { Router, RouterLink } from '@angular/router';
 
 import { AsyncStateWrapperComponent } from '../../../shared/components/async-state-wrapper/async-state-wrapper.component';
+import { AppHeaderComponent } from '../../../shared/layout/app-header/app-header.component';
 import { CLINIC_PHONE_NUMBER } from '../../../core/clinic-info.const';
 import { BookingApiService } from '../../services/booking-api.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
@@ -15,23 +16,10 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-booking-entry-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, RouterLink, TranslatePipe],
+  imports: [AsyncStateWrapperComponent, AppHeaderComponent, RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <app-async-state-wrapper [loading]="loading()" [error]="error()">
-      @if (!loading() && !error()) {
-        @if (enabled()) {
-          <p>{{ 'booking.entry.redirecting' | translate }}</p>
-        } @else {
-          <div class="unavailable">
-            <h1>{{ 'booking.entry.unavailableTitle' | translate }}</h1>
-            <p>{{ 'booking.entry.unavailableBody' | translate:{ clinicPhoneNumber } }}</p>
-          </div>
-        }
-      }
-      <p><a routerLink="/appointments">{{ 'booking.entry.manageExisting' | translate }}</a></p>
-    </app-async-state-wrapper>
-  `,
+  templateUrl: './booking-entry.page.html',
+  styleUrl: './booking-entry.page.scss',
 })
 export class BookingEntryPage implements OnInit {
   private readonly bookingApi = inject(BookingApiService);

@@ -6,7 +6,11 @@
  * consistent without changing a locked backend contract.
  */
 export const CLINIC_PHONE_NUMBER = '+1-555-0100';
-export const CLINIC_TIMEZONE = 'America/New_York';
+export const CLINIC_TIMEZONE = 'Asia/Kuala_Lumpur';
+
+/** Display-only branding used by the patient booking flow's header/sidebar (no backend contract). */
+export const CLINIC_NAME = 'Riverside Family Clinic';
+export const CLINIC_HOURS_DISPLAY = 'Mon–Fri, 9:00 AM – 5:00 PM ET';
 
 /** §11.10: always render and explicitly label clinic-local time, e.g. "1:00 PM EDT" — never the visitor's browser timezone. */
 export function formatClinicTime(isoInstant: string): string {

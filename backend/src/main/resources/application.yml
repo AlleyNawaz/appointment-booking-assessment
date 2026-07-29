@@ -1,6 +1,20 @@
 spring:
+  config:
+    import: optional:classpath:application-secret.yml
   application:
     name: booking
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: AliSemanticWeb@gmail.com
+    password: ${GMAIL_APP_PASSWORD:dummy_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:booking_db}?serverTimezone=UTC
@@ -53,7 +67,7 @@ server:
         same-site: strict
 
 booking:
-  clinic-timezone: ${CLINIC_TIMEZONE:America/New_York}
+  clinic-timezone: ${CLINIC_TIMEZONE:Asia/Kuala_Lumpur}
   max-booking-window-days: 90
   slot-granularity-minutes: 15
   hold-duration-minutes: 5
@@ -70,20 +84,9 @@ booking:
   approval-timeout-hours: 24
   missed-marker-grace-hours: 24
   missed-correction-window-days: 7
-  availability-rate-limit-per-minute: 1000
-  booking-rate-limit-per-ten-minutes: 1000
+  availability-rate-limit-per-minute: 10
+  booking-rate-limit-per-ten-minutes: 5
   cors:
     allowed-origins:
       - "http://localhost:4200"
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: AliSemanticWeb@gmail.com
-    password: YOUR_GMAIL_APP_PASSWORD_HERE
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true

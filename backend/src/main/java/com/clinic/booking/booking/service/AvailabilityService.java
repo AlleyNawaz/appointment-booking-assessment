@@ -166,6 +166,11 @@ public class AvailabilityService {
         }
 
         slots.sort(Instant::compareTo);
+        
+        // Filter out time slots that are before the current time, so patients cannot book in the past.
+        Instant now = Instant.now();
+        slots.removeIf(slot -> slot.isBefore(now));
+
         return new AvailabilityResponse(date, slots);
     }
 

@@ -1,26 +1,24 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 type TranslationNode = string | { [key: string]: TranslationNode };
 
-/**
- * PRD §14 Internationalization readiness: loads the single {@code en-US.json}
- * resource file (the i18n readiness artifact) once at app startup and resolves
- * dot-separated keys against it. Only {@code en-US} ships (§20), so there is
- * no locale-switching here — this is the minimal mechanism that makes the
- * resource file an actual runtime source of UI strings rather than an inert
- * catalog, per the Milestone 13 checklist ("every string... sourced from an
- * i18n resource file, none hardcoded").
- */
 @Injectable({ providedIn: 'root' })
 export class TranslateService {
   private translations: TranslationNode = {};
+  readonly currentLang = signal<string>('en-US');
 
   constructor(private readonly http: HttpClient) {}
 
   async load(): Promise<void> {
-    this.translations = await firstValueFrom(this.http.get<TranslationNode>('/assets/i18n/en-US.json'));
+    await this.use('en-US');
+  }
+
+  async use(lang: string): Promise<void> {
+    const data = await firstValueFrom(this.http.get<TranslationNode>(`/assets/i18n/${lang}.json`));
+    this.translations = data;
+    this.currentLang.set(lang);
   }
 
   /** Resolves a dot-separated key (e.g. {@code "booking.entry.redirecting"}) and interpolates {@code {param}} placeholders. */

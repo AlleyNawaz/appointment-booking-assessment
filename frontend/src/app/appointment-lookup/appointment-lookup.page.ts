@@ -8,6 +8,13 @@ import { AppointmentDetailResponse } from '../booking/models/appointment.model';
 import { BookingApiService } from '../booking/services/booking-api.service';
 import { RescheduleActionComponent } from './reschedule-action.component';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { AppHeaderComponent } from '../shared/layout/app-header/app-header.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 /**
  * `/appointments/:token` (PRD §3/§4/§8.7/§8.8/§8.19) — never gated for
@@ -17,9 +24,22 @@ import { TranslatePipe } from '../core/i18n/translate.pipe';
 @Component({
   selector: 'app-appointment-lookup-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, RescheduleActionComponent, TranslatePipe],
+  imports: [
+    AsyncStateWrapperComponent, 
+    RescheduleActionComponent, 
+    TranslatePipe,
+    AppHeaderComponent,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    FormsModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './appointment-lookup.page.html',
+  styleUrl: './appointment-lookup.page.scss',
 })
 export class AppointmentLookupPage implements OnInit {
   private readonly route = inject(ActivatedRoute);

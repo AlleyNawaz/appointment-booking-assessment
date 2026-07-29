@@ -11,6 +11,7 @@ import com.clinic.booking.booking.repository.ProviderRepository;
 import com.clinic.booking.common.exception.AppointmentNotFoundException;
 import com.clinic.booking.common.exception.CancellationWindowExpiredException;
 import com.clinic.booking.config.BookingProperties;
+import com.clinic.booking.notification.EmailNotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,18 +32,21 @@ public class AppointmentLookupService {
     private final AppointmentTypeRepository appointmentTypeRepository;
     private final AuditLogWriter auditLogWriter;
     private final BookingProperties bookingProperties;
+    private final EmailNotificationService emailNotificationService;
 
     public AppointmentLookupService(
             AppointmentRepository appointmentRepository,
             ProviderRepository providerRepository,
             AppointmentTypeRepository appointmentTypeRepository,
             AuditLogWriter auditLogWriter,
-            BookingProperties bookingProperties) {
+            BookingProperties bookingProperties,
+            EmailNotificationService emailNotificationService) {
         this.appointmentRepository = appointmentRepository;
         this.providerRepository = providerRepository;
         this.appointmentTypeRepository = appointmentTypeRepository;
         this.auditLogWriter = auditLogWriter;
         this.bookingProperties = bookingProperties;
+        this.emailNotificationService = emailNotificationService;
     }
 
     @Transactional(readOnly = true)
@@ -65,6 +69,8 @@ public class AppointmentLookupService {
         appointment.cancel(reason);
         auditLogWriter.write(appointment.getId(), previousStatus, Appointment.Status.CANCELLED,
                 "PATIENT_SELF_SERVICE", reason);
+
+        emailNotificationService.sendCancelNotification(appointment);
 
         return toResponse(appointment);
     }

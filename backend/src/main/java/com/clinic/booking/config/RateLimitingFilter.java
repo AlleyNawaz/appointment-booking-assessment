@@ -91,10 +91,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         long retryAfterSeconds = tryConsume(windows, request.getRemoteAddr(), limit, windowDuration);
-        // if (retryAfterSeconds > 0) {
-        //     writeRateLimited(request, response, retryAfterSeconds);
-        //     return;
-        // }
+        if (retryAfterSeconds > 0) {
+            writeRateLimited(request, response, retryAfterSeconds);
+            return;
+        }
         filterChain.doFilter(request, response);
     }
 

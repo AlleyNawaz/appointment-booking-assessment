@@ -1,18 +1,30 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AppHttpError } from '../../../core/interceptors/http-error.interceptor';
 import { formatClinicDate, formatClinicTime } from '../../../core/clinic-info.const';
 import { AppointmentResponse } from '../../models/appointment.model';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService, ContactDetails } from '../../state/booking-state.service';
+import { AppHeaderComponent } from '../../../shared/layout/app-header/app-header.component';
+import { BookingStepperComponent } from '../../../shared/layout/booking-stepper/booking-stepper.component';
+import { BookingSidebarComponent } from '../../../shared/layout/booking-sidebar/booking-sidebar.component';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 /** `/book/confirm` (PRD §3/§4/§8.6) — final review, submit, and the success/pending result. */
 @Component({
   selector: 'app-review-confirm-page',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [
+    AppHeaderComponent,
+    BookingStepperComponent,
+    BookingSidebarComponent,
+    MatButtonModule,
+    MatIconModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './review-confirm.page.html',
   styleUrl: './review-confirm.page.scss',

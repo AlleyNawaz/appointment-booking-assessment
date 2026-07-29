@@ -1,0 +1,39 @@
+<mat-card class="booking-sidebar-card" appearance="outlined">
+  <h2>{{ 'shared.sidebar.whatsNextTitle' | translate }}</h2>
+  <ul class="booking-sidebar-card__steps">
+    <li>
+      <mat-icon aria-hidden="true">person_search</mat-icon>
+      <span>{{ 'shared.sidebar.whatsNextChooseProvider' | translate }}</span>
+    </li>
+    <li>
+      <mat-icon aria-hidden="true">event</mat-icon>
+      <span>{{ 'shared.sidebar.whatsNextPickDate' | translate }}</span>
+    </li>
+    <li>
+      <mat-icon aria-hidden="true">edit_note</mat-icon>
+      <span>{{ 'shared.sidebar.whatsNextEnterDetails' | translate }}</span>
+    </li>
+    <li>
+      <mat-icon aria-hidden="true">task_alt</mat-icon>
+      <span>{{ 'shared.sidebar.whatsNextReceiveConfirmation' | translate }}</span>
+    </li>
+  </ul>
+
+  <mat-divider class="booking-sidebar-card__divider" />
+
+  <h2>{{ 'shared.sidebar.needHelpTitle' | translate }}</h2>
+  <p class="booking-sidebar-card__help-row">
+    <mat-icon aria-hidden="true">call</mat-icon>
+    <span>
+      <span class="booking-caption">{{ 'shared.sidebar.clinicPhoneLabel' | translate }}</span><br />
+      {{ clinicPhoneNumber }}
+    </span>
+  </p>
+  <p class="booking-sidebar-card__help-row">
+    <mat-icon aria-hidden="true">schedule</mat-icon>
+    <span>
+      <span class="booking-caption">{{ 'shared.sidebar.workingHoursLabel' | translate }}</span><br />
+      {{ clinicHoursDisplay }}
+    </span>
+  </p>
+</mat-card>

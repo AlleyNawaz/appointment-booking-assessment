@@ -1,41 +1,57 @@
-<h1>{{ 'booking.contactDetails.title' | translate }}</h1>
+<app-header />
 
-<form [formGroup]="contactForm" (ngSubmit)="submit()">
-  <div class="form-field">
-    <label for="fullName">{{ 'booking.contactDetails.fullName' | translate }}</label>
-    <input id="fullName" type="text" formControlName="fullName" [attr.aria-invalid]="contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched" />
-    @if (contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">
-        {{ 'booking.contactDetails.fullNameError' | translate }}
-      </p>
-    }
+<div class="booking-page">
+  <app-booking-stepper [currentStep]="4" />
+
+  <div class="booking-page__layout booking-page__layout--with-sidebar">
+    <main class="booking-page__main">
+      <h1>{{ 'booking.contactDetails.title' | translate }}</h1>
+
+      <form class="contact-form card" [formGroup]="contactForm" (ngSubmit)="submit()">
+        <div class="contact-form__field">
+          <label for="fullName">{{ 'booking.contactDetails.fullName' | translate }}</label>
+          <input id="fullName" type="text" formControlName="fullName" [attr.aria-invalid]="contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched" />
+          @if (contactForm.controls.fullName.invalid && contactForm.controls.fullName.touched) {
+            <p role="alert" aria-live="polite" class="contact-form__error">
+              {{ 'booking.contactDetails.fullNameError' | translate }}
+            </p>
+          }
+        </div>
+
+        <div class="contact-form__field">
+          <label for="email">{{ 'booking.contactDetails.email' | translate }}</label>
+          <input id="email" type="email" formControlName="email" [attr.aria-invalid]="contactForm.controls.email.invalid && contactForm.controls.email.touched" />
+          @if (contactForm.controls.email.invalid && contactForm.controls.email.touched) {
+            <p role="alert" aria-live="polite" class="contact-form__error">{{ 'booking.contactDetails.emailError' | translate }}</p>
+          }
+        </div>
+
+        <div class="contact-form__field">
+          <label for="phone">{{ 'booking.contactDetails.phone' | translate }}</label>
+          <input id="phone" type="tel" formControlName="phone" placeholder="+14155551234" [attr.aria-invalid]="contactForm.controls.phone.invalid && contactForm.controls.phone.touched" />
+          @if (contactForm.controls.phone.invalid && contactForm.controls.phone.touched) {
+            <p role="alert" aria-live="polite" class="contact-form__error">
+              {{ 'booking.contactDetails.phoneError' | translate }}
+            </p>
+          }
+        </div>
+
+        <div class="contact-form__field">
+          <label for="notes">{{ 'booking.contactDetails.notes' | translate }} ({{ 'common.optional' | translate }})</label>
+          <textarea id="notes" formControlName="notes" maxlength="500"></textarea>
+          @if (contactForm.controls.notes.invalid && contactForm.controls.notes.touched) {
+            <p role="alert" aria-live="polite" class="contact-form__error">{{ 'booking.contactDetails.notesError' | translate }}</p>
+          }
+        </div>
+
+        <button mat-flat-button color="primary" type="submit" class="contact-form__submit">
+          {{ 'booking.contactDetails.continue' | translate }}
+        </button>
+      </form>
+    </main>
+
+    <aside class="booking-page__aside">
+      <app-booking-sidebar />
+    </aside>
   </div>
-
-  <div class="form-field">
-    <label for="email">{{ 'booking.contactDetails.email' | translate }}</label>
-    <input id="email" type="email" formControlName="email" [attr.aria-invalid]="contactForm.controls.email.invalid && contactForm.controls.email.touched" />
-    @if (contactForm.controls.email.invalid && contactForm.controls.email.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">{{ 'booking.contactDetails.emailError' | translate }}</p>
-    }
-  </div>
-
-  <div class="form-field">
-    <label for="phone">{{ 'booking.contactDetails.phone' | translate }}</label>
-    <input id="phone" type="tel" formControlName="phone" placeholder="+14155551234" [attr.aria-invalid]="contactForm.controls.phone.invalid && contactForm.controls.phone.touched" />
-    @if (contactForm.controls.phone.invalid && contactForm.controls.phone.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">
-        {{ 'booking.contactDetails.phoneError' | translate }}
-      </p>
-    }
-  </div>
-
-  <div class="form-field">
-    <label for="notes">{{ 'booking.contactDetails.notes' | translate }} ({{ 'common.optional' | translate }})</label>
-    <textarea id="notes" formControlName="notes" maxlength="500"></textarea>
-    @if (contactForm.controls.notes.invalid && contactForm.controls.notes.touched) {
-      <p role="alert" aria-live="polite" class="form-field__error">{{ 'booking.contactDetails.notesError' | translate }}</p>
-    }
-  </div>
-
-  <button type="submit">{{ 'booking.contactDetails.continue' | translate }}</button>
-</form>
+</div>

@@ -3,7 +3,7 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from './translate.service';
 
 /** Template-facing wrapper around {@link TranslateService.instant} — {@code {{ 'a.b.c' | translate }}}. */
-@Pipe({ name: 'translate', standalone: true })
+@Pipe({ name: 'translate', standalone: true, pure: false })
 export class TranslatePipe implements PipeTransform {
   private readonly translateService = inject(TranslateService);
 

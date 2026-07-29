@@ -1,29 +1,46 @@
 <header class="app-header">
   <div class="app-header__inner">
-    <a routerLink="/book" class="app-header__brand">
+    <!-- Brand / Logo -->
+    <a routerLink="/" class="app-header__brand">
       <span class="app-header__logo" aria-hidden="true">
         <mat-icon>local_hospital</mat-icon>
       </span>
       <span class="app-header__clinic-name">{{ clinicName }}</span>
     </a>
 
-    <div class="app-header__nav-container">
-      <nav class="app-header__nav" aria-label="Primary">
-        <a routerLink="/book" routerLinkActive="app-header__nav-link--active" class="app-header__nav-link">
-          {{ 'shared.header.navBook' | translate }}
-        </a>
-        <a routerLink="/appointments" class="app-header__nav-link">
-          {{ 'shared.header.navManage' | translate }}
-        </a>
-        <span class="app-header__nav-link app-header__nav-link--static">
-          {{ 'shared.header.navFaqs' | translate }}
-        </span>
-      </nav>
+    <!-- Center Navigation -->
+    <nav class="app-header__nav" aria-label="Primary">
+      <a routerLink="/book" routerLinkActive="app-header__nav-link--active" class="app-header__nav-link">
+        {{ 'shared.header.navBook' | translate }}
+      </a>
+      <a routerLink="/appointments" routerLinkActive="app-header__nav-link--active" class="app-header__nav-link">
+        {{ 'shared.header.navManage' | translate }}
+      </a>
+      <a routerLink="/faqs" routerLinkActive="app-header__nav-link--active" class="app-header__nav-link">
+        {{ 'shared.header.navFaqs' | translate }}
+      </a>
+    </nav>
 
-      <div class="app-header__language" [attr.aria-label]="'shared.header.languageLabel' | translate">
+    <!-- Right Actions -->
+    <div class="app-header__actions">
+      <button mat-button [matMenuTriggerFor]="languageMenu" class="language-btn" [attr.aria-label]="'shared.header.languageLabel' | translate">
         <mat-icon aria-hidden="true">language</mat-icon>
-        <span>English</span>
-      </div>
+        <span>{{ currentLang === 'en-US' ? 'EN' : 'MS' }}</span>
+        <mat-icon class="dropdown-icon">expand_more</mat-icon>
+      </button>
+      
+      <mat-menu #languageMenu="matMenu">
+        <button mat-menu-item (click)="setLanguage('en-US')">
+          <span>English</span>
+        </button>
+        <button mat-menu-item (click)="setLanguage('ms-MY')">
+          <span>Bahasa Melayu</span>
+        </button>
+      </mat-menu>
+
+      <button mat-flat-button color="primary" class="book-now-btn" routerLink="/book">
+        {{ 'landing.bookAppointment' | translate }}
+      </button>
     </div>
   </div>
 </header>

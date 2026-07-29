@@ -1,0 +1,44 @@
+<app-header />
+
+<div class="booking-page">
+  <app-booking-stepper [currentStep]="2" />
+
+  <div class="booking-page__layout booking-page__layout--with-sidebar">
+    <main class="booking-page__main">
+      <h1>{{ 'booking.providerSelection.title' | translate }}</h1>
+      <p class="booking-page__subtitle">{{ 'booking.providerSelection.subtitle' | translate }}</p>
+
+      <app-async-state-wrapper
+        [loading]="loading()"
+        [error]="error()"
+        [empty]="!loading() && !error() && providers().length === 0"
+        [emptyMessage]="'booking.providerSelection.empty' | translate"
+      >
+        <div class="provider-cards">
+          @for (provider of providers(); track provider.id) {
+            <button
+              type="button"
+              class="provider-card"
+              [class.provider-card--selected]="selectedProviderId() === provider.id"
+              [attr.aria-pressed]="selectedProviderId() === provider.id"
+              (click)="select(provider)"
+            >
+              <span class="provider-card__avatar" aria-hidden="true">{{ initialsFor(provider) }}</span>
+              <span class="provider-card__body">
+                <span class="provider-card__name">
+                  {{ 'booking.providerSelection.providerNamePrefix' | translate }} {{ provider.firstName }} {{ provider.lastName }}
+                </span>
+                <span class="provider-card__specialty">{{ provider.specialty }}</span>
+              </span>
+              <mat-icon class="provider-card__chevron" aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          }
+        </div>
+      </app-async-state-wrapper>
+    </main>
+
+    <aside class="booking-page__aside">
+      <app-booking-sidebar />
+    </aside>
+  </div>
+</div>

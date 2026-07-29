@@ -1,9 +1,56 @@
 .hold-error {
-  color: #7a1f14;
+  color: #b91c1c;
+  margin: var(--space-2) 0;
 }
 
-dl {
+.review-summary {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.25rem 1rem;
+  gap: 10px var(--space-3);
+  margin-bottom: var(--space-3);
+
+  dt {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}
+
+.review-summary__submit {
+  margin-top: var(--space-1);
+}
+
+.confirmation-result {
+  max-width: 560px;
+  margin: var(--space-4) auto 0;
+  text-align: center;
+
+  h1 {
+    text-align: center;
+  }
+}
+
+.confirmation-result__icon {
+  width: 56px;
+  height: 56px;
+  font-size: 56px;
+  margin-bottom: var(--space-2);
+}
+
+.confirmation-result__icon--success {
+  color: var(--color-success);
+}
+
+.confirmation-result__icon--pending {
+  color: #d97706;
+}
+
+.confirmation-result__token {
+  margin-top: var(--space-2);
+  font-size: 0.95rem;
 }

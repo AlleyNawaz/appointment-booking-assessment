@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BookingProperties {
 
     /** §11.10: the clinic's single configured IANA timezone, used for date-window validation (§8.4). */
-    private String clinicTimezone = "America/New_York";
+    private String clinicTimezone = "Asia/Kuala_Lumpur";
 
     /** §8.4/§11.3: MAX_BOOKING_WINDOW_DAYS — how many days out a date may be requested/booked. */
     private int maxBookingWindowDays = 90;
