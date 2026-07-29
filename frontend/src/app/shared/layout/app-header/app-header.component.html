@@ -1,0 +1,29 @@
+<header class="app-header">
+  <div class="app-header__inner">
+    <a routerLink="/book" class="app-header__brand">
+      <span class="app-header__logo" aria-hidden="true">
+        <mat-icon>local_hospital</mat-icon>
+      </span>
+      <span class="app-header__clinic-name">{{ clinicName }}</span>
+    </a>
+
+    <div class="app-header__nav-container">
+      <nav class="app-header__nav" aria-label="Primary">
+        <a routerLink="/book" routerLinkActive="app-header__nav-link--active" class="app-header__nav-link">
+          {{ 'shared.header.navBook' | translate }}
+        </a>
+        <a routerLink="/appointments" class="app-header__nav-link">
+          {{ 'shared.header.navManage' | translate }}
+        </a>
+        <span class="app-header__nav-link app-header__nav-link--static">
+          {{ 'shared.header.navFaqs' | translate }}
+        </span>
+      </nav>
+
+      <div class="app-header__language" [attr.aria-label]="'shared.header.languageLabel' | translate">
+        <mat-icon aria-hidden="true">language</mat-icon>
+        <span>English</span>
+      </div>
+    </div>
+  </div>
+</header>
