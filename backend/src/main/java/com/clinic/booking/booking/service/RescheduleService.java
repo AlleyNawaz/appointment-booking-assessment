@@ -199,7 +199,7 @@ public class RescheduleService {
                 .toList();
         boolean alreadyHasSameProvider = sameDay.stream().anyMatch(a -> a.getProviderId().equals(providerId));
         if (alreadyHasSameProvider || sameDay.size() >= 3) {
-            // throw new PatientDailyLimitExceededException(); // Disabled for testing
+            throw new PatientDailyLimitExceededException();
         }
     }
 
