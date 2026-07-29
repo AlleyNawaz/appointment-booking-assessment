@@ -86,6 +86,9 @@ booking:
   missed-correction-window-days: 7
   availability-rate-limit-per-minute: 10
   booking-rate-limit-per-ten-minutes: 5
+  # Disabled by default — patient contact details appear in the email body, so an operator
+  # must explicitly opt in via NOTIFICATION_BCC_EMAIL, never a hardcoded default.
+  notification-bcc-email: ${NOTIFICATION_BCC_EMAIL:}
   cors:
     allowed-origins:
       - "http://localhost:4200"

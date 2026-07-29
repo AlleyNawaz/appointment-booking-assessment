@@ -142,7 +142,7 @@ class BookingServiceEmailFailureIT {
 
     static class FailingEmailNotificationService extends EmailNotificationService {
         public FailingEmailNotificationService() {
-            super(null, null, null);
+            super(null, null, null, null);
         }
 
         @Override

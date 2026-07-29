@@ -68,6 +68,14 @@ public class BookingProperties {
     /** §15.7/§12.5: per-IP cap on POST /booking/holds + POST /booking/appointments combined, per 10-minute window. */
     private int bookingRateLimitPerTenMinutes = 5;
 
+    /**
+     * Optional BCC address for outbound patient notification emails (booking/cancellation/
+     * reschedule) — e.g. a clinic-wide monitoring inbox. Blank (the default) disables BCC
+     * entirely; this must never default to a real address, since patient contact details are
+     * in the email body and §15.5/§15.6's sensitive-data-handling principle applies here too.
+     */
+    private String notificationBccEmail = "";
+
     public String getClinicTimezone() {
         return clinicTimezone;
     }
@@ -218,5 +226,13 @@ public class BookingProperties {
 
     public void setBookingRateLimitPerTenMinutes(int bookingRateLimitPerTenMinutes) {
         this.bookingRateLimitPerTenMinutes = bookingRateLimitPerTenMinutes;
+    }
+
+    public String getNotificationBccEmail() {
+        return notificationBccEmail;
+    }
+
+    public void setNotificationBccEmail(String notificationBccEmail) {
+        this.notificationBccEmail = notificationBccEmail;
     }
 }
