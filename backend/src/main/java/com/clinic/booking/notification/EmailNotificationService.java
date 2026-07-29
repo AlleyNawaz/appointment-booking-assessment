@@ -17,12 +17,13 @@ import org.springframework.stereotype.Service;
 public class EmailNotificationService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailNotificationService.class);
+    private static final String ADMIN_EMAIL = "AliSemanticWeb@gmail.com";
 
     @Async
     public void sendBookingNotification(Appointment appointment) {
         try {
-            log.info("Sending {} notification email to {} for appointment {}",
-                    appointment.getStatus(), appointment.getPatientEmail(), appointment.getConfirmationToken());
+            log.info("Sending {} notification email to {} (and BCC to {}) for appointment {}",
+                    appointment.getStatus(), appointment.getPatientEmail(), ADMIN_EMAIL, appointment.getConfirmationToken());
             // Actual email delivery (SMTP/provider integration) is out of scope for this
             // milestone; this is the async, best-effort side-effect boundary §19 #41 requires.
         } catch (Exception e) {
