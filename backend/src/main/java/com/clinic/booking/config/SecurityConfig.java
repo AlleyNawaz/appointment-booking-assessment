@@ -81,13 +81,13 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/v1/booking/**", "/api/v1/staff/auth/login"))
                 .securityContext(sc -> sc.securityContextRepository(securityContextRepository))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/v1/booking/**").permitAll()
+                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/v1/staff/auth/login").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/staff/**").authenticated()
                         .requestMatchers("/actuator/health", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
                         .requestMatchers("/actuator/**").hasRole("SYSADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 // §8.11: 401 is reserved exclusively for /staff/auth/login credential failures —
                 // no other endpoint in this API ever returns it. An unauthenticated request to a
                 // protected staff endpoint (no session at all), and a CSRF-rejected request, both
