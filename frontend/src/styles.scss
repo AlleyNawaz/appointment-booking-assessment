@@ -1,21 +1,49 @@
-/* Global styles. Booking wizard usable down to 360px viewport (§14). */
+// Custom Theming for Angular Material
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// A sleek, premium, and vibrant color palette for modern healthcare 
+$frontend-primary: mat.define-palette(mat.$indigo-palette, A200, A100, A400);
+$frontend-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$frontend-warn: mat.define-palette(mat.$red-palette);
+
+$frontend-theme: mat.define-light-theme((
+  color: (
+    primary: $frontend-primary,
+    accent: $frontend-accent,
+    warn: $frontend-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: '"Inter", "Outfit", "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+  ),
+  density: 0
+));
+
+@include mat.all-component-themes($frontend-theme);
+
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  color: #1a1a1a;
+  font-family: "Inter", "Outfit", system-ui, sans-serif;
+  color: #1e293b;
+  min-height: 100vh;
+  // Modern vibrant gradient background
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  background-attachment: fixed;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* Glassmorphism options list */
 .option-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .option-list button {
@@ -25,42 +53,207 @@ body {
   justify-content: space-between;
   align-items: baseline;
   gap: 0.25rem 0.75rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ccc;
-  background: #fff;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: #1e293b;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
 }
 
-/* §14: at 360px, the label shrinks/wraps and the meta text drops to its own line rather
-   than either one refusing to shrink and pushing the other off-screen (flex items default
-   to min-width:auto, which is what caused the overflow this rule fixes). */
+.option-list button:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
 .option-list button > span:first-child {
   min-width: 0;
   overflow-wrap: break-word;
 }
 
 .option-list__meta {
-  color: #666;
+  color: #475569;
   flex-shrink: 0;
   white-space: nowrap;
+  font-size: 0.9rem;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
   max-width: 420px;
 }
 
 .form-field__error {
-  color: #7a1f14;
+  color: #dc2626;
   margin: 0;
+  font-size: 0.85rem;
+  animation: shake 0.4s ease-in-out;
 }
 
 .form-field input,
 .form-field textarea {
-  padding: 0.5rem;
+  padding: 0.75rem;
   font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+html, body { height: 100%; }
+
+/* ---------------------------------------------------------------------------
+ * Healthcare booking design system — design tokens + shared layout/utility
+ * ------------------------------------------------------------------------- */
+:root {
+  --color-bg: transparent; // handled by body gradient
+  --color-surface: rgba(255, 255, 255, 0.75);
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-light: #e0e7ff;
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-border: rgba(255, 255, 255, 0.3);
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Centered, max-width content column used by every booking-wizard page. */
+.booking-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-3) var(--space-4);
+  animation: healthcare-fade-in 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.booking-page__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .booking-page__layout--with-sidebar {
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  }
+}
+
+.booking-page__main {
+  min-width: 0;
+}
+
+.booking-page__aside {
+  min-width: 0;
+}
+
+/* Typography hierarchy */
+.booking-page h1,
+.booking-page__main h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.booking-page h2,
+.booking-page__main h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+}
+
+.booking-page__subtitle {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4);
+  font-weight: 400;
+}
+
+.booking-caption {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* Generic card surface - Glassmorphism style */
+.card {
+  background: var(--color-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4);
+  transition: box-shadow var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Micro-animations */
+@keyframes healthcare-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@media (max-width: 480px) {
+  .booking-page {
+    padding: var(--space-3) var(--space-2) var(--space-3);
+  }
+  .card {
+    padding: var(--space-3);
+  }
 }
