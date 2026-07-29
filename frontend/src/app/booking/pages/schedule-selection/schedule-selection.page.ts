@@ -2,20 +2,19 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { Router } from '@angular/router';
 
 import { AsyncStateWrapperComponent } from '../../../shared/components/async-state-wrapper/async-state-wrapper.component';
+import { AppHeaderComponent } from '../../../shared/layout/app-header/app-header.component';
+import { BookingStepperComponent } from '../../../shared/layout/booking-stepper/booking-stepper.component';
+import { BookingSidebarComponent } from '../../../shared/layout/booking-sidebar/booking-sidebar.component';
 import { AppHttpError } from '../../../core/interceptors/http-error.interceptor';
 import { CLINIC_TIMEZONE, formatClinicTime } from '../../../core/clinic-info.const';
 import { BookingApiService } from '../../services/booking-api.service';
 import { BookingStateService } from '../../state/booking-state.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
-const MAX_BOOKING_WINDOW_DAYS = 90;
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
-interface CalendarDay {
-  date: string; // yyyy-MM-dd
-  dayOfMonth: number;
-  disabled: boolean;
-  disabledReason: string;
-}
+const MAX_BOOKING_WINDOW_DAYS = 90;
 
 function todayInClinicTimezone(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: CLINIC_TIMEZONE }).format(new Date());
@@ -31,7 +30,15 @@ function addDays(isoDate: string, days: number): string {
 @Component({
   selector: 'app-schedule-selection-page',
   standalone: true,
-  imports: [AsyncStateWrapperComponent, TranslatePipe],
+  imports: [
+    AsyncStateWrapperComponent,
+    AppHeaderComponent,
+    BookingStepperComponent,
+    BookingSidebarComponent,
+    TranslatePipe,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './schedule-selection.page.html',
   styleUrl: './schedule-selection.page.scss',
@@ -41,11 +48,13 @@ export class ScheduleSelectionPage implements OnInit {
   private readonly bookingState = inject(BookingStateService);
   private readonly router = inject(Router);
 
-  private readonly today = todayInClinicTimezone();
-  private readonly maxDate = addDays(this.today, MAX_BOOKING_WINDOW_DAYS);
+  private readonly todayIso = todayInClinicTimezone();
+  private readonly maxDateIso = addDays(this.todayIso, MAX_BOOKING_WINDOW_DAYS);
 
-  readonly viewedMonth = signal(this.today.slice(0, 7)); // yyyy-MM
-  readonly calendarWeeks = signal<CalendarDay[][]>([]);
+  readonly minDate = new Date(this.todayIso);
+  readonly maxDate = new Date(this.maxDateIso);
+
+  readonly selectedDateObj = signal<Date | null>(null);
   readonly selectedDate = signal<string | null>(null);
 
   readonly slotsLoading = signal(false);
@@ -62,42 +71,24 @@ export class ScheduleSelectionPage implements OnInit {
       return;
     }
     this.flashMessage.set(this.bookingState.consumeFlashMessage());
-    this.renderMonth();
   }
 
   formatSlotTime(slot: string): string {
     return formatClinicTime(slot);
   }
 
-  canGoToPreviousMonth(): boolean {
-    return this.viewedMonth() > this.today.slice(0, 7);
-  }
-
-  canGoToNextMonth(): boolean {
-    return this.viewedMonth() < this.maxDate.slice(0, 7);
-  }
-
-  previousMonth(): void {
-    if (!this.canGoToPreviousMonth()) {
+  selectDate(date: Date | null): void {
+    this.selectedDateObj.set(date);
+    if (!date) {
+      this.selectedDate.set(null);
       return;
     }
-    this.shiftMonth(-1);
-  }
 
-  nextMonth(): void {
-    if (!this.canGoToNextMonth()) {
-      return;
-    }
-    this.shiftMonth(1);
-  }
-
-  selectDate(day: CalendarDay): void {
-    if (day.disabled) {
-      return;
-    }
-    this.selectedDate.set(day.date);
+    // Format date as yyyy-MM-dd
+    const formattedDate = date.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD
+    this.selectedDate.set(formattedDate);
     this.holdError.set(null);
-    this.loadSlots(day.date);
+    this.loadSlots(formattedDate);
   }
 
   selectSlot(slot: string): void {
@@ -124,41 +115,6 @@ export class ScheduleSelectionPage implements OnInit {
         }
       },
     });
-  }
-
-  private shiftMonth(delta: number): void {
-    const [year, month] = this.viewedMonth().split('-').map(Number);
-    const next = new Date(Date.UTC(year, month - 1 + delta, 1));
-    this.viewedMonth.set(`${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, '0')}`);
-    this.renderMonth();
-  }
-
-  private renderMonth(): void {
-    const [year, month] = this.viewedMonth().split('-').map(Number);
-    const firstOfMonth = new Date(Date.UTC(year, month - 1, 1));
-    const startOffset = firstOfMonth.getUTCDay(); // 0=Sunday
-    const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
-
-    const cells: (CalendarDay | null)[] = [...Array(startOffset).fill(null)];
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const disabled = date < this.today || date > this.maxDate;
-      cells.push({
-        date,
-        dayOfMonth: day,
-        disabled,
-        disabledReason: disabled ? 'Outside the booking window' : '',
-      });
-    }
-    while (cells.length % 7 !== 0) {
-      cells.push(null);
-    }
-
-    const weeks: CalendarDay[][] = [];
-    for (let i = 0; i < cells.length; i += 7) {
-      weeks.push(cells.slice(i, i + 7) as CalendarDay[]);
-    }
-    this.calendarWeeks.set(weeks);
   }
 
   private loadSlots(date: string): void {

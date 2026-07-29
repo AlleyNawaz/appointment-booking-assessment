@@ -1,61 +1,23 @@
-<h1>{{ 'booking.scheduleSelection.title' | translate }}</h1>
+<app-header />
 
-@if (flashMessage()) {
-  <p role="alert" aria-live="polite" class="hold-error">{{ flashMessage() }}</p>
-}
+<div class="booking-page">
+  <app-booking-stepper [currentStep]="3" />
 
-<div class="calendar">
-  <div class="calendar__nav">
-    <button
-      type="button"
-      (click)="previousMonth()"
-      [disabled]="!canGoToPreviousMonth()"
-      [attr.aria-label]="'booking.scheduleSelection.previousMonth' | translate"
-    >
-      &lsaquo;
-    </button>
-    <span>{{ viewedMonth() }}</span>
-    <button
-      type="button"
-      (click)="nextMonth()"
-      [disabled]="!canGoToNextMonth()"
-      [attr.aria-label]="'booking.scheduleSelection.nextMonth' | translate"
-    >
-      &rsaquo;
-    </button>
-  </div>
+  <div class="booking-page__layout booking-page__layout--with-sidebar">
+    <main class="booking-page__main">
+      <h1>{{ 'booking.scheduleSelection.title' | translate }}</h1>
 
-  <div class="calendar__grid" role="grid" [attr.aria-label]="'booking.scheduleSelection.calendarAriaLabel' | translate">
-    <div class="calendar__week calendar__week--header" role="row">
-      @for (weekday of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track weekday) {
-        <span role="columnheader">{{ ('booking.scheduleSelection.weekday' + weekday) | translate }}</span>
+      @if (flashMessage()) {
+        <p role="alert" aria-live="polite" class="hold-error">{{ flashMessage() }}</p>
       }
-    </div>
 
-    @for (week of calendarWeeks(); track $index) {
-      <div class="calendar__week" role="row">
-        @for (day of week; track $index) {
-          @if (day) {
-            <button
-              type="button"
-              role="gridcell"
-              class="calendar__day"
-              [class.calendar__day--selected]="selectedDate() === day.date"
-              [attr.aria-selected]="selectedDate() === day.date"
-              [attr.aria-disabled]="day.disabled"
-              [attr.aria-label]="day.disabled ? day.date + ': ' + day.disabledReason : day.date"
-              [disabled]="day.disabled"
-              (click)="selectDate(day)"
-            >
-              {{ day.dayOfMonth }}
-            </button>
-          } @else {
-            <span class="calendar__day calendar__day--empty" role="gridcell" aria-hidden="true"></span>
-          }
-        }
-      </div>
-    }
-  </div>
+<div class="calendar card">
+  <mat-calendar 
+    [selected]="selectedDateObj()"
+    (selectedChange)="selectDate($event)"
+    [minDate]="minDate"
+    [maxDate]="maxDate">
+  </mat-calendar>
 </div>
 
 @if (selectedDate()) {
@@ -80,3 +42,10 @@
     </div>
   </app-async-state-wrapper>
 }
+    </main>
+
+    <aside class="booking-page__aside">
+      <app-booking-sidebar />
+    </aside>
+  </div>
+</div>
