@@ -167,9 +167,9 @@ public class AvailabilityService {
 
         slots.sort(Instant::compareTo);
         
-        // Filter out time slots that are before the current time, so patients cannot book in the past.
-        Instant now = Instant.now();
-        slots.removeIf(slot -> slot.isBefore(now));
+        // Filter out time slots that do not meet the minimum booking lead time (e.g. 24 hours).
+        Instant earliestAllowed = Instant.now().plus(bookingProperties.getMinLeadTimeHours(), java.time.temporal.ChronoUnit.HOURS);
+        slots.removeIf(slot -> slot.isBefore(earliestAllowed));
 
         return new AvailabilityResponse(date, slots);
     }

@@ -97,13 +97,19 @@ class BookingConfigControllerIT {
         ResponseEntity<List> providersResponse =
                 restTemplate.getForEntity("/api/v1/booking/providers?appointmentTypeId=2", List.class);
         assertThat(providersResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(providersResponse.getBody()).isEmpty(); // no providers seeded yet (Milestone 1 seeds no provider rows)
+        // V14's demo seed maps a real provider to every appointment type, so this list is no
+        // longer expected to be empty — assert DTO shape instead (id/firstName/lastName/specialty
+        // only, no internal-only fields like email/isActive/deletedAt leaking out).
+        assertThat(providersResponse.getBody()).isNotEmpty();
+        Map<String, Object> firstProvider = (Map<String, Object>) providersResponse.getBody().get(0);
+        assertThat(firstProvider).containsOnlyKeys("id", "firstName", "lastName", "specialty");
 
         ResponseEntity<Map> availabilityResponse = restTemplate.getForEntity(
                 "/api/v1/booking/availability?providerId=5&appointmentTypeId=2&date=" + tomorrow(), Map.class);
         assertThat(availabilityResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(availabilityResponse.getBody()).containsEntry("date", tomorrow().toString());
-        // no providers seeded yet, so no availability rules exist for providerId=5 either — empty is correct (§19 #35)
+        // providerId=5 is a placeholder id with no availability rules of its own (the demo seed
+        // uses different, higher provider ids) — empty slots for this specific id is still correct.
         assertThat((List<?>) availabilityResponse.getBody().get("slots")).isEmpty();
     }
 
