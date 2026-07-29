@@ -51,7 +51,7 @@ management:
         enabled: true
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:8080}
   # Honour X-Forwarded-* headers (client IP, proto, host) so RateLimitingFilter and
   # request logging see the real client address when deployed behind a load balancer
   # or reverse proxy (PRD §14 Scalability). The proxy/LB is trusted infrastructure and
