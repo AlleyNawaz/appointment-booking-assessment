@@ -310,7 +310,7 @@
     "DEFAULT": "Something went wrong. Please try again."
   },
   "landing": {
-    "launchBadge": "Riverside Family Clinic v2.0 >",
+    "launchBadge": "Book your appointment today >",
     "heroTitle": "The better way to schedule your appointments",
     "heroDescription": "A fully customizable scheduling system for patients and staff. Book your clinic visits seamlessly, without the hassle of phone calls or wait times.",
     "bookAppointment": "Book Appointment",

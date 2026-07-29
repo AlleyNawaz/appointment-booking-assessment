@@ -53,6 +53,16 @@
 }
 
 .contact-form__submit {
-  align-self: flex-start;
-  margin-top: var(--space-1);
+  align-self: stretch;
+  margin-top: var(--space-2);
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all var(--transition-base);
+
+  &:not([disabled]):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(15, 118, 110, 0.2);
+  }
 }
